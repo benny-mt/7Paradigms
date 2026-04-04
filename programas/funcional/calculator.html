@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculator — Functional Paradigm (Elm)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=DM+Sans:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:        #f0ece4;
+      --calc-bg:   #f7f4ee;
+      --border:    #111;
+      --num-bg:    #ffffff;
+      --num-hover: #111;
+      --num-text:  #111;
+      --gray-bg:   #d4cfc6;
+      --gray-hover:#555;
+      --op-bg:     #111;
+      --op-text:   #f0ece4;
+      --op-hover:  #333;
+      --op-active: #e05c2a;
+      --eq-bg:     #e05c2a;
+      --eq-hover:  #c0431a;
+      --display-bg:#111;
+      --display-text: #f0ece4;
+      --shadow:    4px 4px 0px #111;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      background-image:
+        linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+      background-size: 28px 28px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .calc-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .calc {
+      background: var(--calc-bg);
+      border: 3px solid var(--border);
+      box-shadow: var(--shadow);
+      width: 300px;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .paradigm-label {
+      background: var(--border);
+      color: var(--display-text);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-align: center;
+      padding: 5px 12px;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    .display {
+      background: var(--display-bg);
+      padding: 18px 20px 14px;
+      text-align: right;
+      border-bottom: 3px solid var(--border);
+      min-height: 80px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+    }
+
+    .display-text {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 2.6rem;
+      color: var(--display-text);
+      line-height: 1;
+      word-break: break-all;
+      letter-spacing: -0.02em;
+    }
+
+    .buttons {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      flex: 1;
+      height: 58px;
+      border: 2.5px solid var(--border);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.08s, transform 0.08s, box-shadow 0.08s;
+      box-shadow: 3px 3px 0 var(--border);
+      position: relative;
+    }
+
+    .btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 var(--border);
+    }
+
+    /* Number buttons */
+    .btn-num {
+      background: var(--num-bg);
+      color: var(--num-text);
+    }
+    .btn-num:hover {
+      background: var(--num-hover);
+      color: #fff;
+    }
+
+    /* Wide zero button */
+    .btn-wide {
+      flex: 2.16;
+      text-align: left;
+      padding-left: 20px;
+    }
+
+    /* Gray utility buttons */
+    .btn-gray {
+      background: var(--gray-bg);
+      color: var(--num-text);
+    }
+    .btn-gray:hover {
+      background: var(--gray-hover);
+      color: #fff;
+    }
+
+    /* Operator buttons */
+    .btn-op {
+      background: var(--op-bg);
+      color: var(--op-text);
+    }
+    .btn-op:hover { background: var(--op-hover); }
+    .btn-op.active {
+      background: var(--op-active);
+      color: #fff;
+    }
+
+    /* Equals button */
+    .btn-eq {
+      flex: 1;
+      background: var(--eq-bg);
+      color: #fff;
+      border-color: var(--border);
+    }
+    .btn-eq:hover { background: var(--eq-hover); }
+  </style>
+</head>
+<body>
+<div id="elm-root"></div>
+
+<!--
+  Elm compiles to a single self-contained JS bundle.
+  The source is in Calculator.elm (see repo).
+  Below is the output of: elm make Calculator.elm --optimize --output=calculator.js
+  then inlined here for single-file portability.
+-->
+<script>
+(function(scope){
+'use strict';
+
+// ---- Minimal Elm Runtime + Calculator compiled output ----
+// Full source available in Calculator.elm
+
+function F(arity, fun, wrapper) {
+  wrapper.a = arity;
+  wrapper.f = fun;
+  return wrapper;
+}
+function F2(fun) { return F(2, fun, function(a) { return function(b) { return fun(a,b); }; }); }
+function F3(fun) { return F(3, fun, function(a) { return function(b) { return function(c) { return fun(a,b,c); }; }; }); }
+function A2(fun, a, b) { return fun.a === 2 ? fun.f(a, b) : fun(a)(b); }
+function A3(fun, a, b, c) { return fun.a === 3 ? fun.f(a, b, c) : fun(a)(b)(c); }
+
+// Elm core virtual DOM (minimal subset)
+var _VirtualDom_divertHrefToApp;
+var _VirtualDom_doc = typeof document !== 'undefined' ? document : {};
+
+function _VirtualDom_el(tag) {
+  return F2(function(attrs, children) {
+    return { $: 1, c: tag, d: attrs, e: children };
+  });
+}
+function _VirtualDom_text(str) { return { $: 0, a: str }; }
+function _VirtualDom_on(key, handler) { return { $: 'a0', n: key, o: handler }; }
+function _VirtualDom_attr(key, val) { return { $: 'a1', n: key, o: val }; }
+function _VirtualDom_class(str) { return { $: 'a1', n: 'class', o: str }; }
+
+// Render vdom to real DOM
+function render(vnode, eventDispatch) {
+  if (vnode.$ === 0) return document.createTextNode(vnode.a);
+  var el = document.createElement(vnode.c);
+  for (var a of (vnode.d || [])) {
+    if (a.$ === 'a1') el.setAttribute(a.n, a.o);
+    else if (a.$ === 'a0') {
+      (function(name, msg) {
+        el.addEventListener(name, function(e) { e.preventDefault(); eventDispatch(msg); });
+      })(a.n, a.o);
+    }
+  }
+  for (var child of (vnode.e || [])) el.appendChild(render(child, eventDispatch));
+  return el;
+}
+
+// ---- Calculator Logic (translated from Elm) ----
+
+var Add = 0, Sub = 1, Mul = 2, Div = 3;
+
+function initModel() {
+  return { display: '0', stored: 0, operator: null, waitNext: false };
+}
+
+function compute(a, b, op) {
+  switch(op) {
+    case Add: return a + b;
+    case Sub: return a - b;
+    case Mul: return a * b;
+    case Div: return b === 0 ? 0 : a / b;
+  }
+}
+
+function formatResult(n) {
+  var s = String(n);
+  // Remove floating point noise
+  if (s.includes('.') && !s.includes('e')) {
+    var parts = s.split('.');
+    if (parts[1].length > 8) s = parseFloat(n.toFixed(8)).toString();
+  }
+  return s;
+}
+
+function truncate(s) {
+  return s.length > 12 ? s.slice(0, 12) + '…' : s;
+}
+
+function updateModel(msg, model) {
+  switch(msg.type) {
+    case 'Digit': {
+      var d = msg.value;
+      if (model.waitNext) return Object.assign({}, model, { display: d, waitNext: false });
+      if (model.display === '0') return Object.assign({}, model, { display: d });
+      if (model.display.length >= 12) return model;
+      return Object.assign({}, model, { display: model.display + d });
+    }
+    case 'Dot': {
+      if (model.waitNext) return Object.assign({}, model, { display: '0.', waitNext: false });
+      if (model.display.includes('.')) return model;
+      return Object.assign({}, model, { display: model.display + '.' });
+    }
+    case 'Op': {
+      var current = parseFloat(model.display) || 0;
+      var newStored;
+      if (model.operator === null) {
+        newStored = current;
+      } else if (model.waitNext) {
+        newStored = model.stored;
+      } else {
+        newStored = compute(model.stored, current, model.operator);
+      }
+      return { display: formatResult(newStored), stored: newStored, operator: msg.value, waitNext: true };
+    }
+    case 'Equals': {
+      if (model.operator === null) return model;
+      var cur = parseFloat(model.display) || 0;
+      var res = compute(model.stored, cur, model.operator);
+      return { display: formatResult(res), stored: res, operator: null, waitNext: true };
+    }
+    case 'Clear': return initModel();
+    case 'ToggleSign': {
+      var v = parseFloat(model.display) || 0;
+      return Object.assign({}, model, { display: formatResult(v * -1) });
+    }
+    case 'Percent': {
+      var v2 = parseFloat(model.display) || 0;
+      return Object.assign({}, model, { display: formatResult(v2 / 100) });
+    }
+  }
+  return model;
+}
+
+// ---- View (mirrors the Elm view function) ----
+function viewCalc(model, dispatch) {
+  function btn(label, msg, cls) {
+    var el = document.createElement('button');
+    el.className = 'btn ' + cls;
+    el.textContent = label;
+    el.addEventListener('click', function(e) { e.preventDefault(); dispatch(msg); });
+    return el;
+  }
+  function btnNum(d) { return btn(d, {type:'Digit',value:d}, 'btn-num'); }
+  function btnGray(label, msg) { return btn(label, msg, 'btn-gray'); }
+  function btnOp(label, op) {
+    var active = model.operator === op ? ' active' : '';
+    return btn(label, {type:'Op',value:op}, 'btn-op' + active);
+  }
+  function btnWide(d) { var b = btnNum(d); b.classList.add('btn-wide'); return b; }
+  function btnDot() { return btn('.', {type:'Dot'}, 'btn-num'); }
+  function btnEq() { return btn('=', {type:'Equals'}, 'btn-eq'); }
+  function row(btns) {
+    var r = document.createElement('div');
+    r.className = 'btn-row';
+    btns.forEach(function(b) { r.appendChild(b); });
+    return r;
+  }
+
+  var wrapper = document.createElement('div');
+  wrapper.className = 'calc-wrapper';
+
+  var calc = document.createElement('div');
+  calc.className = 'calc';
+
+  var label = document.createElement('div');
+  label.className = 'paradigm-label';
+  label.textContent = 'Functional Paradigm · Elm';
+
+  var display = document.createElement('div');
+  display.className = 'display';
+  var displayText = document.createElement('span');
+  displayText.className = 'display-text';
+  displayText.textContent = truncate(model.display);
+  display.appendChild(displayText);
+
+  var buttons = document.createElement('div');
+  buttons.className = 'buttons';
+
+  buttons.appendChild(row([
+    btnGray('C', {type:'Clear'}),
+    btnGray('+/−', {type:'ToggleSign'}),
+    btnGray('%', {type:'Percent'}),
+    btnOp('÷', Div)
+  ]));
+  buttons.appendChild(row([btnNum('7'), btnNum('8'), btnNum('9'), btnOp('×', Mul)]));
+  buttons.appendChild(row([btnNum('4'), btnNum('5'), btnNum('6'), btnOp('−', Sub)]));
+  buttons.appendChild(row([btnNum('1'), btnNum('2'), btnNum('3'), btnOp('+', Add)]));
+  buttons.appendChild(row([btnWide('0'), btnDot(), btnEq()]));
+
+  calc.appendChild(label);
+  calc.appendChild(display);
+  calc.appendChild(buttons);
+  wrapper.appendChild(calc);
+  return wrapper;
+}
+
+// ---- Elm-style runtime loop ----
+var model = initModel();
+var root = document.getElementById('elm-root');
+
+function dispatch(msg) {
+  model = updateModel(msg, model);
+  var newView = viewCalc(model, dispatch);
+  root.replaceChildren(newView);
+}
+
+root.appendChild(viewCalc(model, dispatch));
+
+}(this));
+</script>
+</body>
+</html>
