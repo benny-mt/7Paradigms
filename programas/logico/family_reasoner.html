@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Family Reasoner — Prolog</title>
+  <!-- Codigo generado por Claude.ai) -->
+  <script src="https://cdn.jsdelivr.net/npm/tau-prolog@0.3.2/modules/core.js"></script>
+  <style>
+    body { font-family: monospace; max-width: 600px; margin: 40px auto; padding: 0 16px; background: #1e1e1e; color: #d4d4d4; }
+    h2   { color: #9cdcfe; margin-bottom: 4px; }
+    p    { color: #808080; font-size: 0.85rem; margin-bottom: 20px; }
+    pre  { background: #2d2d2d; padding: 12px; border-radius: 4px; font-size: 0.82rem; color: #ce9178; overflow-x: auto; }
+    .row { display: flex; gap: 8px; margin-top: 16px; }
+    input  { flex: 1; font-family: monospace; font-size: 0.9rem; padding: 6px 10px; background: #2d2d2d; border: 1px solid #555; color: #d4d4d4; border-radius: 3px; }
+    button { font-family: monospace; padding: 6px 16px; background: #0e639c; border: none; color: #fff; border-radius: 3px; cursor: pointer; }
+    button:hover { background: #1177bb; }
+    #output { margin-top: 14px; background: #2d2d2d; padding: 12px; border-radius: 4px; min-height: 60px; font-size: 0.88rem; white-space: pre-wrap; color: #4ec9b0; }
+  </style>
+</head>
+<body>
+
+<h2>Family Reasoner</h2>
+<p>Logical Paradigm · Prolog (Tau Prolog)</p>
+
+<pre>parent(tom, bob).   parent(tom, liz).
+parent(bob, ann).   parent(bob, pat).
+parent(pat, jim).   parent(liz, mary).
+
+male(tom). male(bob). male(pat). male(jim).
+female(liz). female(ann). female(mary).
+
+grandparent(X,Z) :- parent(X,Y), parent(Y,Z).
+ancestor(X,Y)    :- parent(X,Y).
+ancestor(X,Y)    :- parent(X,Z), ancestor(Z,Y).
+sibling(X,Y)     :- parent(P,X), parent(P,Y), X \= Y.
+uncle(X,Y)       :- parent(P,Y), sibling(X,P), male(X).
+cousin(X,Y)      :- parent(PX,X), parent(PY,Y), sibling(PX,PY).</pre>
+
+<div class="row">
+  <input id="query" type="text" value="grandparent(tom, X)." spellcheck="false"/>
+  <button id="btn-run">Run</button>
+</div>
+<div id="output">Loading Tau Prolog...</div>
+
+<script>
+const PROGRAM = `
+parent(tom,bob). parent(tom,liz).
+parent(bob,ann). parent(bob,pat).
+parent(pat,jim). parent(liz,mary).
+male(tom). male(bob). male(pat). male(jim).
+female(liz). female(ann). female(mary).
+grandparent(X,Z) :- parent(X,Y), parent(Y,Z).
+ancestor(X,Y) :- parent(X,Y).
+ancestor(X,Y) :- parent(X,Z), ancestor(Z,Y).
+sibling(X,Y) :- parent(P,X), parent(P,Y), X \\= Y.
+uncle(X,Y) :- parent(P,Y), sibling(X,P), male(X).
+cousin(X,Y) :- parent(PX,X), parent(PY,Y), sibling(PX,PY).
+`;
+
+window.addEventListener('DOMContentLoaded', function() {
+  const out = document.getElementById('output');
+
+  if (typeof pl === 'undefined') {
+    out.textContent = 'Error: Tau Prolog failed to load. Check your internet connection.';
+    return;
+  }
+
+  out.textContent = 'Ready. Enter a query and press Run.';
+
+  function runQuery() {
+    const raw = document.getElementById('query').value.trim();
+    if (!raw) return;
+    const query = raw.endsWith('.') ? raw : raw + '.';
+    out.textContent = '';
+
+    const session = pl.create(1000);
+    session.consult(PROGRAM, {
+      success: function() {
+        session.query(query, {
+          success: function() {
+            let count = 0;
+            function next() {
+              session.answer({
+                success: function(ans) {
+                  count++;
+                  const vars = Object.keys(ans.links).filter(v => !v.startsWith('_'));
+                  if (vars.length === 0) out.textContent += 'true.\n';
+                  else out.textContent += vars.map(v => v + ' = ' + ans.links[v]).join(', ') + '\n';
+                  if (count < 20) next();
+                },
+                fail:  function()  { if (count === 0) out.textContent = 'false.'; },
+                error: function(e) { out.textContent = 'error: ' + e; },
+                limit: function()  { out.textContent += '(inference limit reached)'; }
+              });
+            }
+            next();
+          },
+          error: function(e) { out.textContent = 'syntax error: ' + e; }
+        });
+      },
+      error: function(e) { out.textContent = 'program error: ' + e; }
+    });
+  }
+
+  document.getElementById('btn-run').addEventListener('click', runQuery);
+  document.getElementById('query').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') runQuery();
+  });
+});
+</script>
+</body>
+</html>
