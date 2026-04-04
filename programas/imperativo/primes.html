@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Prime Finder — Python (PyScript)</title>
+  <link rel="stylesheet" href="https://pyscript.net/releases/2024.5.1/core.css"/>
+  <script type="module" src="https://pyscript.net/releases/2024.5.1/core.js"></script>
+  <style>
+    body     { font-family: monospace; max-width: 480px; margin: 40px auto; padding: 0 16px; background: #1e1e1e; color: #d4d4d4; }
+    h2       { color: #9cdcfe; margin-bottom: 4px; }
+    p        { color: #808080; font-size: 0.85rem; margin-bottom: 20px; }
+    label    { display: block; font-size: 0.85rem; color: #808080; margin-bottom: 6px; }
+    input    { font-family: monospace; font-size: 1rem; padding: 7px 10px; background: #2d2d2d; border: 1px solid #555; color: #d4d4d4; border-radius: 3px; width: 100%; margin-bottom: 10px; }
+    button   { font-family: monospace; font-size: 0.9rem; padding: 7px 20px; background: #0e639c; border: none; color: #fff; border-radius: 3px; cursor: pointer; width: 100%; }
+    button:hover { background: #1177bb; }
+    #output  { margin-top: 16px; background: #2d2d2d; padding: 12px; border-radius: 4px; font-size: 0.88rem; color: #4ec9b0; min-height: 48px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+
+<h2>Prime Number Finder</h2>
+<p>Imperative Paradigm · Python via PyScript</p>
+
+<label>Find all primes up to:</label>
+<input id="limit" type="number" value="50" min="2"/>
+<button py-click="find_primes">Find Primes</button>
+
+<div id="output">Waiting for Python runtime to load...</div>
+
+<script type="py">
+from pyscript import document
+
+def find_primes(event):
+    # Read input
+    limit = int(document.getElementById("limit").value)
+    out   = document.getElementById("output")
+
+    if limit < 2:
+        out.innerText = "Please enter a number >= 2."
+        return
+
+    # Sieve of Eratosthenes — classic imperative algorithm
+    is_prime = [True] * (limit + 1)
+    is_prime[0] = False
+    is_prime[1] = False
+
+    i = 2
+    while i * i <= limit:
+        if is_prime[i]:
+            j = i * i
+            while j <= limit:
+                is_prime[j] = False
+                j += i
+        i += 1
+
+    primes = [n for n in range(limit + 1) if is_prime[n]]
+
+    out.innerText = f"Found {len(primes)} primes up to {limit}:\n\n{primes}"
+</script>
+
+</body>
+</html>
