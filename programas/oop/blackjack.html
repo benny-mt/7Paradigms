@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blackjack — OOP Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=IM+Fell+English&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --felt:        #1a3a2a;
+      --felt-light:  #1f4532;
+      --felt-dark:   #122518;
+      --gold:        #c9a84c;
+      --gold-light:  #e8c96d;
+      --gold-dark:   #8a6820;
+      --card-bg:     #fdfaf3;
+      --card-shadow: rgba(0,0,0,0.55);
+      --red:         #c0392b;
+      --black:       #1a1a1a;
+      --text-light:  #f0e6cc;
+      --win-color:   #2ecc71;
+      --lose-color:  #e74c3c;
+      --push-color:  #f39c12;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'IM Fell English', serif;
+      background: var(--felt-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Felt texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 2px,
+          rgba(255,255,255,0.012) 2px,
+          rgba(255,255,255,0.012) 4px
+        );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .table {
+      position: relative;
+      z-index: 1;
+      width: min(820px, 96vw);
+      background: radial-gradient(ellipse 90% 80% at 50% 50%, var(--felt-light), var(--felt), var(--felt-dark));
+      border-radius: 180px;
+      border: 6px solid var(--gold-dark);
+      box-shadow:
+        0 0 0 10px #0d1f16,
+        0 0 0 14px var(--gold-dark),
+        0 30px 80px rgba(0,0,0,0.7),
+        inset 0 0 60px rgba(0,0,0,0.3);
+      padding: 50px 60px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Gold arc line at top */
+    .table::after {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 55%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      border-radius: 50%;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      color: var(--gold-light);
+      text-align: center;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-shadow: 0 2px 12px rgba(201,168,76,0.4);
+    }
+
+    /* ---- Sections ---- */
+    .section-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.75;
+      margin-bottom: 10px;
+    }
+
+    .hand-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .score-badge {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      background: rgba(0,0,0,0.35);
+      border: 1px solid var(--gold-dark);
+      border-radius: 20px;
+      padding: 2px 16px;
+      margin-bottom: 14px;
+      letter-spacing: 0.05em;
+    }
+
+    .cards-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      min-height: 110px;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+      opacity: 0.5;
+    }
+
+    /* ---- Cards ---- */
+    .card {
+      width: 70px;
+      height: 100px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      box-shadow: 3px 4px 14px var(--card-shadow);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: dealCard 0.25s ease-out both;
+      flex-shrink: 0;
+    }
+
+    @keyframes dealCard {
+      from { opacity: 0; transform: translateY(-18px) rotate(-4deg); }
+      to   { opacity: 1; transform: translateY(0) rotate(0deg); }
+    }
+
+    .card.red { color: var(--red); }
+    .card.black { color: var(--black); }
+
+    .card-corner {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1;
+      gap: 1px;
+    }
+    .card-corner.top-left { top: 5px; left: 6px; }
+    .card-corner.bottom-right { bottom: 5px; right: 6px; transform: rotate(180deg); }
+
+    .card-rank { font-size: 0.9rem; font-weight: 700; font-family: 'Playfair Display', serif; }
+    .card-suit { font-size: 0.65rem; }
+    .card-center-suit { font-size: 1.8rem; line-height: 1; }
+
+    /* Face-down card */
+    .card.face-down {
+      background: #1a3a6e;
+      border-color: #0d2452;
+      overflow: hidden;
+    }
+    .card-back-pattern {
+      width: 100%;
+      height: 100%;
+      background-image:
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0, rgba(255,255,255,0.06) 1px, transparent 0, transparent 50%),
+        repeating-linear-gradient(-45deg, rgba(255,255,255,0.06) 0, rgba(255,255,255,0.06) 1px, transparent 0, transparent 50%);
+      background-size: 8px 8px;
+      border-radius: 7px;
+      border: 3px solid rgba(255,255,255,0.1);
+      margin: 5px;
+    }
+
+    /* ---- Message ---- */
+    .message {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      min-height: 1.8rem;
+      transition: color 0.3s;
+      color: var(--text-light);
+    }
+    .message.win  { color: var(--win-color);  text-shadow: 0 0 18px rgba(46,204,113,0.5); }
+    .message.lose { color: var(--lose-color); text-shadow: 0 0 18px rgba(231,76,60,0.4);  }
+    .message.push { color: var(--push-color); text-shadow: 0 0 18px rgba(243,156,18,0.4); }
+
+    /* ---- Buttons ---- */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 10px 28px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    #btn-deal {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: #1a1208;
+      box-shadow: 0 3px 12px rgba(201,168,76,0.35);
+    }
+    #btn-deal:hover { background: linear-gradient(135deg, var(--gold-light), var(--gold)); transform: translateY(-1px); }
+
+    #btn-hit, #btn-stand {
+      background: rgba(255,255,255,0.08);
+      color: var(--text-light);
+      border: 1px solid rgba(201,168,76,0.3);
+    }
+    #btn-hit:hover:not(:disabled), #btn-stand:hover:not(:disabled) {
+      background: rgba(255,255,255,0.15);
+      border-color: var(--gold);
+      transform: translateY(-1px);
+    }
+    button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ---- Footer note ---- */
+    .paradigm-note {
+      text-align: center;
+      font-size: 0.65rem;
+      color: var(--gold);
+      opacity: 0.45;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="table">
+  <h1>♠ Blackjack ♥</h1>
+
+  <div class="hand-area">
+    <div class="section-label">Dealer</div>
+    <div class="score-badge">Score: <span id="dealer-score">—</span></div>
+    <div class="cards-row" id="dealer-cards"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="message" id="message">Press Deal to start</div>
+
+  <div class="divider"></div>
+
+  <div class="hand-area">
+    <div class="section-label">Player</div>
+    <div class="score-badge">Score: <span id="player-score">—</span></div>
+    <div class="cards-row" id="player-cards"></div>
+  </div>
+
+  <div class="controls">
+    <button id="btn-deal">Deal</button>
+    <button id="btn-hit" disabled>Hit</button>
+    <button id="btn-stand" disabled>Stand</button>
+  </div>
+
+  <div class="paradigm-note">OOP Paradigm · TypeScript → JavaScript</div>
+</div>
+
+<script>
+// ============================================================
+// Blackjack — compiled from TypeScript (blackjack.ts)
+// OOP Paradigm: Card, Deck, Hand, BlackjackGame classes
+// ============================================================
+"use strict";
+
+class Card {
+  constructor(suit, rank) {
+    this.suit = suit;
+    this.rank = rank;
+  }
+  get value() {
+    if (['J', 'Q', 'K'].includes(this.rank)) return 10;
+    if (this.rank === 'A') return 11;
+    return parseInt(this.rank);
+  }
+  get isRed() { return this.suit === '♥' || this.suit === '♦'; }
+  render(faceDown = false) {
+    if (faceDown) {
+      return `<div class="card face-down"><div class="card-back-pattern"></div></div>`;
+    }
+    const colorClass = this.isRed ? 'red' : 'black';
+    return `
+      <div class="card ${colorClass}">
+        <div class="card-corner top-left">
+          <span class="card-rank">${this.rank}</span>
+          <span class="card-suit">${this.suit}</span>
+        </div>
+        <div class="card-center-suit">${this.suit}</div>
+        <div class="card-corner bottom-right">
+          <span class="card-rank">${this.rank}</span>
+          <span class="card-suit">${this.suit}</span>
+        </div>
+      </div>`;
+  }
+}
+
+class Deck {
+  constructor() { this.cards = []; this.build(); this.shuffle(); }
+  build() {
+    const suits = ['♠','♥','♦','♣'];
+    const ranks = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+    for (const suit of suits)
+      for (const rank of ranks)
+        this.cards.push(new Card(suit, rank));
+  }
+  shuffle() {
+    for (let i = this.cards.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
+    }
+  }
+  deal() {
+    if (this.cards.length === 0) { this.build(); this.shuffle(); }
+    return this.cards.pop();
+  }
+}
+
+class Hand {
+  constructor() { this.cards = []; }
+  add(card) { this.cards.push(card); }
+  get score() {
+    let total = this.cards.reduce((sum, c) => sum + c.value, 0);
+    let aces = this.cards.filter(c => c.rank === 'A').length;
+    while (total > 21 && aces > 0) { total -= 10; aces--; }
+    return total;
+  }
+  get isBust() { return this.score > 21; }
+  get isBlackjack() { return this.cards.length === 2 && this.score === 21; }
+  clear() { this.cards = []; }
+}
+
+class BlackjackGame {
+  constructor() {
+    this.deck = new Deck();
+    this.player = new Hand();
+    this.dealer = new Hand();
+    this.state = 'idle';
+    this.message = '';
+    this.result = null;
+  }
+  deal() {
+    this.player.clear(); this.dealer.clear();
+    this.result = null; this.message = '';
+    this.player.add(this.deck.deal());
+    this.dealer.add(this.deck.deal());
+    this.player.add(this.deck.deal());
+    this.dealer.add(this.deck.deal());
+    this.state = 'playing';
+    if (this.player.isBlackjack) {
+      this.dealer.isBlackjack ? this.endGame('push') : this.endGame('win', 'Blackjack! You win!');
+    }
+  }
+  hit() {
+    if (this.state !== 'playing') return;
+    this.player.add(this.deck.deal());
+    if (this.player.isBust) this.endGame('lose', 'Bust! You went over 21.');
+  }
+  stand() {
+    if (this.state !== 'playing') return;
+    this.state = 'dealerTurn';
+    while (this.dealer.score < 17) this.dealer.add(this.deck.deal());
+    if (this.dealer.isBust)              this.endGame('win',  'Dealer busts! You win!');
+    else if (this.dealer.score > this.player.score) this.endGame('lose', 'Dealer wins.');
+    else if (this.dealer.score < this.player.score) this.endGame('win',  'You win!');
+    else                                             this.endGame('push', "It's a tie!");
+  }
+  endGame(result, msg) {
+    this.state = 'over'; this.result = result;
+    this.message = msg || (result === 'push' ? "It's a tie!" : result === 'win' ? 'You win!' : 'Dealer wins.');
+  }
+}
+
+// ---- UI ----
+const game = new BlackjackGame();
+
+function render() {
+  const dealerCards = game.dealer.cards
+    .map((c, i) => c.render(i === 1 && game.state === 'playing'))
+    .join('');
+  const playerCards = game.player.cards.map(c => c.render()).join('');
+
+  document.getElementById('dealer-cards').innerHTML = dealerCards;
+  document.getElementById('player-cards').innerHTML = playerCards;
+  document.getElementById('dealer-score').textContent =
+    game.state === 'playing' ? `${game.dealer.cards[0]?.value ?? 0}+?` : `${game.dealer.score}`;
+  document.getElementById('player-score').textContent =
+    game.player.cards.length ? `${game.player.score}` : '—';
+
+  const msg = document.getElementById('message');
+  msg.textContent = game.message || (game.state === 'idle' ? 'Press Deal to start' : '');
+  msg.className = 'message ' + (game.result || '');
+
+  document.getElementById('btn-hit').disabled   = game.state !== 'playing';
+  document.getElementById('btn-stand').disabled = game.state !== 'playing';
+  document.getElementById('btn-deal').textContent = game.state === 'idle' ? 'Deal' : 'New Game';
+}
+
+document.getElementById('btn-deal').addEventListener('click',  () => { game.deal();  render(); });
+document.getElementById('btn-hit').addEventListener('click',   () => { game.hit();   render(); });
+document.getElementById('btn-stand').addEventListener('click', () => { game.stand(); render(); });
+
+render();
+</script>
+</body>
+</html>
