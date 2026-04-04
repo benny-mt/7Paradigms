@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>~*~ My Fav Games ~*~</title>
+  <style>
+    body {
+      background-color: #000080;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0,0,255,0.08) 2px,
+          rgba(0,0,255,0.08) 4px
+        );
+      color: #00ff00;
+      font-family: "Courier New", Courier, monospace;
+      margin: 0;
+      padding: 10px;
+    }
+
+    .marquee-bar {
+      background: #000;
+      border: 2px solid #ffff00;
+      padding: 4px 0;
+      margin-bottom: 10px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .marquee-inner {
+      display: inline-block;
+      animation: marquee 18s linear infinite;
+      color: #ffff00;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+    }
+    @keyframes marquee {
+      from { transform: translateX(100vw); }
+      to   { transform: translateX(-100%); }
+    }
+
+    .container { max-width: 800px; margin: 0 auto; }
+
+    .site-header {
+      text-align: center;
+      border: 3px double #ffff00;
+      background: #000;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .site-title {
+      font-size: 2rem;
+      text-shadow: 2px 2px #ff0000, -1px -1px #0000ff;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+      animation: colorshift 3s infinite alternate;
+    }
+    @keyframes colorshift {
+      0%   { color: #ff00ff; }
+      33%  { color: #00ffff; }
+      66%  { color: #ffff00; }
+      100% { color: #ff00ff; }
+    }
+    .site-subtitle { color: #00ff00; font-size: 0.8rem; letter-spacing: 0.15em; }
+    .blinking { animation: blink 1s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .divider { text-align: center; color: #ffff00; font-size: 0.85rem; letter-spacing: 0.2em; margin: 10px 0; }
+
+    .filter-section {
+      background: #000;
+      border: 2px solid #00ff00;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .filter-section p { font-size: 0.75rem; color: #ffff00; margin-bottom: 6px; letter-spacing: 0.1em; }
+    .filter-btn {
+      font-family: "Courier New", monospace;
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      margin: 2px;
+      background: #000080;
+      color: #ffffff;
+      border: 2px outset #aaaaaa;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+    }
+    .filter-btn:active { border-style: inset; }
+    .filter-btn.active { background: #000000; color: #ffff00; border: 2px inset #aaaaaa; }
+
+    .game-count { font-size: 0.72rem; color: #aaaaaa; text-align: center; margin-bottom: 8px; }
+
+    .game-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .game-card {
+      background: #000;
+      border: 2px solid #00ff00;
+      display: flex;
+      overflow: hidden;
+    }
+    .game-card:nth-child(even) { border-color: #00ffff; }
+    .game-card:nth-child(3n)   { border-color: #ff00ff; }
+
+    .game-img-wrap {
+      width: 140px;
+      min-width: 140px;
+      height: 140px;
+      overflow: hidden;
+      border-right: 2px solid #333;
+      flex-shrink: 0;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+    }
+    .game-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      image-rendering: pixelated;
+      filter: saturate(1.2) contrast(1.1);
+    }
+
+    .game-info { padding: 10px 14px; flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .game-title { font-size: 1rem; color: #ffff00; letter-spacing: 0.05em; text-transform: uppercase; }
+    .game-meta  { font-size: 0.72rem; color: #aaaaaa; letter-spacing: 0.08em; }
+    .game-meta span { color: #00ffff; }
+    .game-stars { font-size: 0.9rem; letter-spacing: 2px; color: #ffff00; }
+    .game-stars .empty-star { color: #333; }
+    .game-review { font-size: 0.78rem; color: #cccccc; line-height: 1.6; border-left: 2px solid #444; padding-left: 8px; margin-top: 2px; }
+
+    .site-footer { text-align: center; margin-top: 16px; border-top: 2px dashed #333; padding-top: 10px; font-size: 0.7rem; color: #555; letter-spacing: 0.1em; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="site-header">
+    <div class="site-title">~*~ FAVORITE GAMES ~*~</div>
+    <div class="site-subtitle">:: PERSONAL REVIEWS &amp; RATINGS :: <span class="blinking">▮</span></div>
+  </div>
+
+  <div class="filter-section">
+    <p>&gt;&gt; FILTER BY GENRE &lt;&lt;</p>
+   <div id="filter-bar"></div>
+  </div>
+
+  <div class="game-count" id="game-count"></div>
+  <div class="game-list" id="game-list"></div>
+
+  <div class="site-footer">
+    <p style="margin-top:4px">[ <span style="color:#00ff00">best viewed in netscape navigator</span> ]</p>
+  </div>
+
+</div>
+<script>
+// ============================================================
+// To add or edit games, modify the GAMES array below.
+// For images, place the file in an images/ subfolder and set
+// the image field to "images/yourfile.jpg".
+// Leave image as "" to show the default emoji placeholder.
+// Rating is 1 to 5.
+// ============================================================
+const GAMES = [
+  {
+    title:  "The Witcher 3",
+    genre:  "RPG",
+    image:  "images/witcher3.jpg",
+    rating: 5,
+    review: "An absolute masterpiece. The world-building, side quests, and characters set a new standard for open-world RPGs. Hundreds of hours and still finding new things."
+  },
+  {
+    title:  "Hollow Knight",
+    genre:  "Metroidvania",
+    image:  "images/hollowknight.jpg",
+    rating: 5,
+    review: "Challenging, beautiful, and deeply atmospheric. The lore hidden in every corner makes exploration incredibly rewarding. One of the best indie games ever made."
+  },
+  {
+    title:  "Doom Eternal",
+    genre:  "FPS",
+    image:  "images/doom.jpg",
+    rating: 4,
+    review: "Pure adrenaline from start to finish. The combat loop is genius — aggressive play is survival. Demanding but incredibly satisfying once it clicks."
+  },
+  {
+    title:  "Disco Elysium",
+    genre:  "RPG",
+    image:  "images/disco.jpg",
+    rating: 5,
+    review: "Unlike anything else. A detective RPG with no combat — just dialogue, skill checks, and one of the most unique protagonists in gaming history."
+  },
+  {
+    title:  "Dark Souls III",
+    genre:  "Action RPG",
+    image:  "images/ds3.jpg",
+    rating: 4,
+    review: "Brutal but fair. Every death teaches you something. The boss fights and interconnected world design are some of the best in the series."
+  },
+  {
+    title:  "Celeste",
+    genre:  "Platformer",
+    image:  "images/celeste.jpg",
+    rating: 5,
+    review: "Pixel-perfect platforming paired with a genuinely touching story about mental health. The assist mode makes it accessible without compromising the core experience."
+  }
+];
+
+// ---- No edits needed below this line ----
+
+let currentFilter = 'All';
+
+function starsHTML(rating) {
+  let html = '';
+  for (let i = 1; i <= 5; i++)
+    html += `<span class="${i <= rating ? '' : 'empty-star'}">★</span>`;
+  return html;
+}
+
+function buildFilters() {
+  const genres = ['All', ...new Set(GAMES.map(g => g.genre))];
+  document.getElementById('filter-bar').innerHTML = genres.map(genre =>
+    `<button class="filter-btn ${genre === 'All' ? 'active' : ''}"
+       onclick="setFilter('${genre}', this)">[${genre.toUpperCase()}]</button>`
+  ).join('');
+}
+
+function setFilter(genre, btn) {
+  currentFilter = genre;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGames();
+}
+
+function renderGames() {
+  const filtered = currentFilter === 'All' ? GAMES : GAMES.filter(g => g.genre === currentFilter);
+  document.getElementById('game-count').textContent =
+    `>> showing ${filtered.length} of ${GAMES.length} games <<`;
+  document.getElementById('game-list').innerHTML = filtered.map(g => `
+    <div class="game-card">
+      <div class="game-img-wrap">
+        ${g.image
+          ? `<img src="${g.image}" alt="${g.title}" onerror="this.parentElement.innerHTML='🎮'"/>`
+          : '🎮'}
+      </div>
+      <div class="game-info">
+        <div class="game-title">${g.title}</div>
+        <div class="game-meta">GENRE: <span>${g.genre}</span></div>
+        <div class="game-stars">${starsHTML(g.rating)}</div>
+        <div class="game-review">"${g.review}"</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+buildFilters();
+renderGames();
+</script>
+</body>
+</html>
