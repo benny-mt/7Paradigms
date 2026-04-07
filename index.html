@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title> >> Midterm Benny</title>
+  <style>
+    /* ============================================
+       MAIN PORTFOLIO — Old School GeoCities Style
+       ============================================ */
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #f2f2f2;
+      background-image:
+        radial-gradient(ellipse at 0% 0%, rgba(242,242,242,0.4) 0%, transparent 0%),
+        radial-gradient(ellipse at 0% 0%, rgba(242,242,242,0.3) 0%, transparent 0%);
+      color: #f2f2f2;
+      font-family: "Courier New", Courier, monospace;
+      margin: 0;
+      padding: 10px;
+    }
+
+    a { color: #00ffff; text-decoration: underline; }
+    a:visited { color: #ff00ff; }
+    a:hover { color: #f2f2f2; background: #000000; }
+
+    .container { max-width: 780px; margin: 0 auto; }
+
+    /* ---- Marquee ---- */
+    .marquee-bar {
+      background: #000;
+      border-top: 2px solid #ffff00;
+      border-bottom: 2px solid #ffff00;
+      padding: 4px 0;
+      margin-bottom: 12px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .marquee-inner {
+      display: inline-block;
+      animation: marquee 22s linear infinite;
+      color: #ffff00;
+      font-size: 0.82rem;
+      letter-spacing: 0.1em;
+    }
+    @keyframes marquee {
+      from { transform: translateX(100vw); }
+      to   { transform: translateX(-100%); }
+    }
+
+    /* ---- Header ---- */
+    .site-header {
+      border: 4.2px solid #000000;
+      background: #ffffff;
+      padding: 20px 16px;
+      text-align: center;
+      margin-bottom: 12px;
+      position: relative;
+    }
+  
+    .site-name {
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+      text-shadow: 4px 2px #000000;
+    }
+    /* @keyframes colorshift {
+      0%   { color: #ff00ff; }
+      50%  { color: #00ffff; }
+      100% { color: #ffff00; }
+    } */
+    .site-tagline {
+      font-size: 0.82rem;
+      color: #000000;
+      letter-spacing: 0.14em;
+      margin-bottom: 8px;
+    }
+    .site-badges {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .badge {
+      font-size: 0.62rem;
+      border: 1px solid #555;
+      padding: 2px 7px;
+      letter-spacing: 0.1em;
+      color: #888;
+      text-transform: uppercase;
+    }
+    /* .badge.green { border-color: #00ff00; color: #00ff00; }
+    .badge.cyan  { border-color: #00ffff; color: #00ffff; }
+    .badge.pink  { border-color: #ff00ff; color: #ff00ff; }
+
+    .blinking { animation: blink 1s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } } */
+
+    /* ---- Divider ---- */
+    /* .divider {
+      text-align: center;
+      color: #ff00ff;
+      font-size: 0.82rem;
+      letter-spacing: 0.18em;
+      margin: 12px 0;
+    } */
+
+    /* ---- Two column layout ---- */
+    /* .layout {
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 12px;
+      align-items: start;
+    } */
+    @media (max-width: 580px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    /* ---- Panels ---- */
+    .panel {
+      border: 2px solid #000000;
+      background: #000011;
+      margin-bottom: 29px;
+    }
+    .panel.yellow { border-color: #ffff00; }
+    .panel.cyan   { border-color: #00ffff; }
+    .panel.pink   { border-color: #ff00ff; }
+    .panel.red    { border-color: #ff4444; }
+
+    .panel-title {
+      background: #000000;
+      color: #f2f2f2;
+      font-size: 0.72rem;
+      font-weight: bold;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border-bottom: 1px solid #f2f2f2;
+    }
+    .panel-title.green-bg { background: #003300; color: #00ff00; }
+    .panel-title.pink-bg  { background: #220022; color: #ff00ff; }
+    .panel-title.cyan-bg  { background: #001122; color: #00ffff; }
+    .panel-title.red-bg   { background: #220000; color: #ff4444; }
+
+    .panel-body { padding: 12px; font-size: 0.82rem; line-height: 1.7; }
+
+    ---- About section ----
+    .about-text { color: #cccccc; }
+    .about-text p { margin-bottom: 8px; }
+    .about-text .highlight { color: #f2f2f2; }
+    .about-text .label {
+      color: #0066ff;
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 1px;
+      margin-top: 2px;
+    }
+
+    /* ---- Skills list ---- */
+    /* .skill-row { margin-bottom: 6px; font-size: 0.78rem; }
+    .skill-label { color: #ffff00; font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; }
+    .skill-items { color: #aaaaaa; } */
+
+    /* ---- Programs grid ---- */
+    .programs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    @media (max-width: 420px) {
+      .programs-grid { grid-template-columns: 1fr; }
+    }
+
+    .prog-card {
+      border: 2px outset #555;
+      background: #000000;
+      padding: 8px 10px;
+      text-decoration: none;
+      display: block;
+      transition: background 0.1s;
+    }
+    .prog-card:hover {
+      background: #f2f2f2;
+      border-style: inset;
+      text-decoration: none;
+    }
+    .prog-number {
+      font-size: 0.6rem;
+      color: #555;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .prog-name {
+      color: #00ffff;
+      font-size: 0.88rem;
+      letter-spacing: 0.04em;
+      margin: 2px 0;
+      text-decoration: none;
+    }
+    .prog-card:hover .prog-name { color: #000000; }
+    .prog-paradigm {
+      font-size: 0.65rem;
+      color: #555;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .prog-lang {
+      font-size: 0.65rem;
+      color: #0066ff;
+      letter-spacing: 0.08em;
+    }
+
+    /* ---- Sidebar widgets ---- */
+    .visitor-counter {
+      text-align: center;
+      padding: 10px;
+      font-size: 0.72rem;
+      color: #888;
+      letter-spacing: 0.1em;
+    }
+    .counter-num {
+      font-size: 1.4rem;
+      color: #00ff00;
+      letter-spacing: 0.2em;
+      display: block;
+      margin: 4px 0;
+      font-family: "Courier New", monospace;
+    }
+
+    .now-playing {
+      font-size: 0.75rem;
+      color: #aaaaaa;
+      line-height: 1.8;
+    }
+    .now-playing .np-label {
+      color: #ff00ff;
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .now-playing .np-value { color: #ffffff; }
+
+    .quick-links { list-style: none; }
+    .quick-links li { border-bottom: 1px solid #111; padding: 5px 0; font-size: 0.78rem; }
+    .quick-links li:last-child { border-bottom: none; }
+    .quick-links li::before { content: ">> "; color: #00ff00; }
+
+    .info-list { font-size: 0.78rem; line-height: 2; }
+    .info-list span { color: #ffff00; }
+
+    /* ---- Experience entries ---- */
+    .exp-entry { margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed #222; }
+    .exp-entry:last-child { border-bottom: none; margin-bottom: 0; }
+    .exp-title { color: #ffff00; font-size: 0.82rem; letter-spacing: 0.04em; }
+    .exp-org   { color: #00ffff; font-size: 0.72rem; letter-spacing: 0.06em; }
+    .exp-date  { color: #555; font-size: 0.68rem; letter-spacing: 0.1em; margin-bottom: 4px; }
+    .exp-desc  { color: #999; font-size: 0.75rem; line-height: 1.6; }
+
+    /* ---- Certs ---- */
+    .cert-item { margin-bottom: 6px; font-size: 0.78rem; }
+    .cert-name   { color: #cccccc; }
+    .cert-status { color: #00ff00; font-size: 0.68rem; letter-spacing: 0.08em; }
+    .cert-status.pursuing { color: #ffff00; }
+
+    /* ---- Footer ---- */
+    .site-footer {
+      text-align: center;
+      margin-top: 14px;
+      border-top: 2px dashed #333;
+      padding-top: 10px;
+      font-size: 0.68rem;
+      color: #444;
+      letter-spacing: 0.1em;
+      line-height: 2;
+    }
+    .site-footer .highlight { color: #0066ff; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="site-header">
+    <span class="header-corners tl">✦</span>
+    <span class="header-corners tr">✦</span>
+    <span class="header-corners bl">✦</span>
+    <span class="header-corners br">✦</span>
+    <div class="site-name">~*~ BENNY MARCANO ~*~</div>
+    <div class="site-tagline">:: PROYECTO MIDTERM LENGUAJES DE PROGRAMACION :: <span class="blinking">▮</span></div>
+    <div class="site-badges">
+    </div>
+  </div>
+
+  <div class="divider">✦-=[ NAVEGATION: scroll or click a section below ]=-✦</div>
+
+  <!-- Two column layout -->
+  <div class="layout">
+
+    <!-- LEFT: main content -->
+    <div class="main-col">
+
+      <!-- About -->
+      <div class="panel white">
+        <div class="panel-title white-bg">// About Me</div>
+        <div class="panel-body about-text">
+          <!-- ============================================
+               EDIT THIS SECTION — write your own bio here
+               ============================================ -->
+          <span class="label">Who am I?</span>
+          <p>
+            Hi! I'm <span class="highlight">YOUR NAME</span> —
+            <!-- Write a short intro about yourself here. Example: -->
+            a senior CS student at the University of Puerto Rico, Mayaguez,
+            passionate about cybersecurity, systems, and building things that work.
+          </p>
+          <span class="label">What I'm about</span>
+          <p>
+            <!-- Write 1-2 sentences about your interests/goals here -->
+            [REPLACE THIS WITH YOUR OWN BIO — what are you interested in? what are your goals?]
+          </p>
+          <span class="label">Contact</span>
+          <p>
+            📧 <a href="mailto:bmarcano123@gmail.com">email@gmail.com</a> &nbsp;|&nbsp;
+            🔗 <a href="https://linkedin.com/in/benny-m3" target="_blank">LinkedIn</a>
+          </p>
+        </div>
+      </div>
+
+      <!-- Programs -->
+      <div class="panel yellow">
+        <div class="panel-title">// My Programs — Languages &amp; Paradigms</div>
+        <div class="panel-body">
+          <div class="programs-grid">
+
+            <a class="prog-card" href="programas/oop/blackjack.html">
+              <div class="prog-number">Program 01</div>
+              <div class="prog-name">♠ Blackjack</div>
+              <div class="prog-paradigm">Object-Oriented</div>
+              <div class="prog-lang">TypeScript</div>
+            </a>
+
+            <a class="prog-card" href="programas/funcional/calculator.html">
+              <div class="prog-number">Program 02</div>
+              <div class="prog-name">∑ Calculator</div>
+              <div class="prog-paradigm">Functional</div>
+              <div class="prog-lang">Elm</div>
+            </a>
+
+            <a class="prog-card" href="programas/logico/family_reasoner.html">
+              <div class="prog-number">Program 03</div>
+              <div class="prog-name">⊢ Family Reasoner</div>
+              <div class="prog-paradigm">Logical</div>
+              <div class="prog-lang">Prolog (Tau Prolog)</div>
+            </a>
+
+            <a class="prog-card" href="programas/imperativo/prime_finder.html">
+              <div class="prog-number">Program 04</div>
+              <div class="prog-name"># Prime Finder</div>
+              <div class="prog-paradigm">Imperative</div>
+              <div class="prog-lang">Python (PyScript)</div>
+            </a>
+
+            <a class="prog-card" href="programas/cv/cv.html">
+              <div class="prog-number">Program 05</div>
+              <div class="prog-name">📄 CV Builder</div>
+              <div class="prog-paradigm">Special Requirement</div>
+              <div class="prog-lang">JavaScript</div>
+            </a>
+
+            <a class="prog-card" href="programas/Extra1_gameReview/games.html">
+              <div class="prog-number">Program 06</div>
+              <div class="prog-name">🎮 Game Collection</div>
+              <div class="prog-paradigm">Free Choice</div>
+              <div class="prog-lang">JavaScript</div>
+            </a>
+
+            <a class="prog-card" href="programas/musicHUB/music.html">
+              <div class="prog-number">Program 07</div>
+              <div class="prog-name">♪ Music Hub</div>
+              <div class="prog-paradigm">Free Choice</div>
+              <div class="prog-lang">JavaScript</div>
+            </a>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    </div>
+  </div><!-- end layout -->
+
+  <!-- Footer -->
+  <div class="site-footer">
+    <div>✦ ✦ ✦</div>
+    <div>Made with <span class="highlight">HTML</span>, <span class="highlight">CSS</span> &amp; <span class="highlight">JavaScript</span></div>
+    <div>Lenguajes de Programación — UPRM 2026</div>
+    <div style="margin-top:4px; color:#333">[ Best viewed in any browser — yes even this one ]</div>
+  </div>
+
+</div>
+
+<script>
+  // Fake visitor counter for aesthetic — increments from a random base on each visit
+  const base  = 31337;
+  const extra = Math.floor(Math.random() * 999);
+  document.getElementById('counter').textContent =
+    String(base + extra).padStart(6, '0');
+</script>
+</body>
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>~*~ My Music Hub ~*~</title>
+  <style>
+    body {
+      background-color: #000000;
+      color: #00ff00;
+      font-family: "Courier New", Courier, monospace;
+      margin: 0;
+      padding: 10px;
+    }
+
+    .marquee-bar {
+      background: #000080;
+      border: 2px solid #ff00ff;
+      padding: 4px 0;
+      margin-bottom: 10px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .marquee-inner {
+      display: inline-block;
+      animation: marquee 20s linear infinite;
+      color: #ffffff;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+    }
+    @keyframes marquee {
+      from { transform: translateX(100vw); }
+      to   { transform: translateX(-100%); }
+    }
+
+    .container { max-width: 700px; margin: 0 auto; }
+
+    /* Header */
+    .site-header {
+      text-align: center;
+      border: 3px double #ff00ff;
+      background: #000033;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .site-title {
+      font-size: 1.9rem;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+      animation: colorshift 4s infinite alternate;
+    }
+    @keyframes colorshift {
+      0%   { color: #ff00ff; }
+      50%  { color: #00ffff; }
+      100% { color: #ffff00; }
+    }
+    .site-subtitle { font-size: 0.78rem; color: #aaaaaa; letter-spacing: 0.14em; }
+    .blinking { animation: blink 1s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .divider { text-align: center; color: #ff00ff; font-size: 0.85rem; letter-spacing: 0.2em; margin: 12px 0; }
+
+    /* Genre list */
+    .genres-box {
+      border: 2px solid #00ff00;
+      background: #000011;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+    }
+    .genres-box p {
+      font-size: 0.75rem;
+      color: #ffff00;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .genre-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .genre-tag {
+      font-size: 0.72rem;
+      color: #00ffff;
+      border: 1px solid #00ffff;
+      padding: 2px 8px;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      transition: background 0.1s;
+    }
+    .genre-tag:hover { background: #00ffff; color: #000; }
+
+    /* Search box */
+    .search-box {
+      border: 2px solid #ffff00;
+      background: #000011;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+    .search-box label {
+      display: block;
+      font-size: 0.78rem;
+      color: #ffff00;
+      letter-spacing: 0.12em;
+      margin-bottom: 8px;
+    }
+    .input-row { display: flex; gap: 8px; }
+    .search-box input {
+      flex: 1;
+      font-family: "Courier New", monospace;
+      font-size: 0.9rem;
+      padding: 6px 10px;
+      background: #000;
+      border: 2px inset #555;
+      color: #00ff00;
+      outline: none;
+      letter-spacing: 0.08em;
+    }
+    .search-box input:focus { border-color: #00ff00; }
+    .search-box button {
+      font-family: "Courier New", monospace;
+      font-size: 0.82rem;
+      padding: 6px 14px;
+      background: #000080;
+      color: #ffffff;
+      border: 2px outset #aaaaaa;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+    }
+    .search-box button:active { border-style: inset; }
+
+    /* Result */
+    .result-box {
+      border: 2px solid #00ffff;
+      background: #000022;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      display: none;
+    }
+    .result-box.visible { display: block; }
+
+    .result-header {
+      font-size: 0.7rem;
+      color: #888;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #222;
+      padding-bottom: 6px;
+    }
+
+    .result-genre {
+      font-size: 0.72rem;
+      color: #ff00ff;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .result-artist {
+      font-size: 1.3rem;
+      color: #ffff00;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+
+    .result-song {
+      font-size: 0.85rem;
+      color: #00ffff;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+    .result-song span { color: #888; font-size: 0.75rem; }
+
+    .result-note {
+      font-size: 0.78rem;
+      color: #cccccc;
+      line-height: 1.6;
+      border-left: 2px solid #333;
+      padding-left: 10px;
+      font-style: italic;
+    }
+
+    /* Not found */
+    .not-found {
+      border: 2px solid #ff0000;
+      background: #110000;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      display: none;
+      font-size: 0.82rem;
+      color: #ff4444;
+      letter-spacing: 0.08em;
+    }
+    .not-found.visible { display: block; }
+
+    /* All entries table */
+    .all-box {
+      border: 2px solid #333;
+      background: #000011;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+    }
+    .all-box p {
+      font-size: 0.72rem;
+      color: #555;
+      letter-spacing: 0.14em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+    th {
+      text-align: left;
+      color: #555;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border-bottom: 1px solid #222;
+      padding: 4px 8px;
+      font-weight: normal;
+    }
+    td { padding: 5px 8px; border-bottom: 1px solid #111; color: #999; }
+    td:first-child { color: #ff00ff; }
+    td:nth-child(2) { color: #ffff00; }
+    td:nth-child(3) { color: #00ffff; }
+    tr:hover td { background: #0a0a1a; }
+
+    .site-footer {
+      text-align: center;
+      margin-top: 16px;
+      border-top: 2px dashed #222;
+      padding-top: 10px;
+      font-size: 0.7rem;
+      color: #444;
+      letter-spacing: 0.1em;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="marquee-bar">
+    <span class="marquee-inner">
+      ♪ WELCOME TO MY MUSIC HUB ♪ TYPE A GENRE TO FIND MY FAVES ♪ MUSIC IS LIFE ♪ NO SKIP SONGS ONLY ♪ TURN IT UP ♪
+    </span>
+  </div>
+
+  <div class="site-header">
+    <div class="site-title">~*~ MY MUSIC HUB ~*~</div>
+    <div class="site-subtitle">:: FAVORITE ARTISTS &amp; SONGS BY GENRE :: <span class="blinking">♪</span></div>
+  </div>
+
+  <div class="divider">-=[ TYPE A GENRE BELOW TO SEE MY PICKS ]=-</div>
+
+  <!-- Available genres hint -->
+  <div class="genres-box">
+    <p>&gt;&gt; AVAILABLE GENRES (click to search) &lt;&lt;</p>
+    <div class="genre-tags" id="genre-tags"></div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-box">
+    <label>&gt; ENTER GENRE:</label>
+    <div class="input-row">
+      <input id="genre-input" type="text" placeholder="e.g. metal, jazz, rap..." autocomplete="off" spellcheck="false"/>
+      <button onclick="search()">[ SEARCH ]</button>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-box" id="result-box">
+    <div class="result-header">// SEARCH RESULT</div>
+    <div class="result-genre"  id="r-genre"></div>
+    <div class="result-artist" id="r-artist"></div>
+    <div class="result-song"   id="r-song"></div>
+    <div class="result-note"   id="r-note"></div>
+  </div>
+
+  <!-- Not found -->
+  <div class="not-found" id="not-found">
+    &gt;&gt; ERROR 404: Genre not found in database.<br/>
+    Try one of the genres listed above.
+  </div>
+
+  <!-- Full list -->
+  <div class="all-box">
+    <p>// full database</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Genre</th>
+          <th>Artist</th>
+          <th>Fav Song</th>
+        </tr>
+      </thead>
+      <tbody id="full-table"></tbody>
+    </table>
+  </div>
+
+  <div class="site-footer">
+    <p>~~ these are MY opinions, not yours ~~ ♪</p>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// Music Hub — to add entries, edit the MUSIC object below.
+// Each key is a genre (lowercase), value has:
+//   artist   — your favorite artist in that genre
+//   song     — your favorite song from that artist
+//   note     — a short personal comment (optional)
+// ============================================================
+const MUSIC = {
+  "metal": {
+    artist: "Metallica",
+    song:   "Master of Puppets",
+    note:   "The riff that started everything for me. Eight minutes that feel like two."
+  },
+  "jazz": {
+    artist: "Miles Davis",
+    song:   "So What",
+    note:   "Kind of Blue changed how I think about music entirely. So What is the perfect opener."
+  },
+  "rap": {
+    artist: "Kendrick Lamar",
+    song:   "HUMBLE.",
+    note:   "The beat, the bars, the video — everything about this track is surgical."
+  },
+  "hip hop": {
+    artist: "J. Cole",
+    song:   "Love Yourz",
+    note:   "No features, no gimmicks. Just real talk over a beautiful beat."
+  },
+  "rock": {
+    artist: "Pink Floyd",
+    song:   "Comfortably Numb",
+    note:   "That guitar solo is possibly the greatest ever recorded. No debate."
+  },
+  "indie": {
+    artist: "Arctic Monkeys",
+    song:   "Do I Wanna Know?",
+    note:   "That opening riff is immediately recognizable. A perfect song start to finish."
+  },
+  "electronic": {
+    artist: "Daft Punk",
+    song:   "Get Lucky",
+    note:   "Nile Rodgers on guitar + Daft Punk production = instant classic."
+  },
+  "classical": {
+    artist: "Ludwig van Beethoven",
+    song:   "Moonlight Sonata",
+    note:   "Written while he was going deaf. The first movement is haunting and perfect."
+  },
+  "punk": {
+    artist: "The Clash",
+    song:   "London Calling",
+    note:   "Angry, political, and timeless. The energy never gets old."
+  },
+  "reggae": {
+    artist: "Bob Marley",
+    song:   "Redemption Song",
+    note:   "Just a man and a guitar. One of the most powerful songs ever written."
+  }
+};
+
+// ---- No edits needed below ----
+
+function normalize(str) {
+  return str.trim().toLowerCase();
+}
+
+function search() {
+  const input  = document.getElementById('genre-input').value;
+  const key    = normalize(input);
+  const result = MUSIC[key];
+
+  document.getElementById('result-box').classList.remove('visible');
+  document.getElementById('not-found').classList.remove('visible');
+
+  if (!input) return;
+
+  if (result) {
+    document.getElementById('r-genre').textContent  = '[ ' + key.toUpperCase() + ' ]';
+    document.getElementById('r-artist').textContent = result.artist;
+    document.getElementById('r-song').innerHTML     = '♪ ' + result.song + ' <span>// favorite song</span>';
+    document.getElementById('r-note').textContent   = result.note || '';
+    document.getElementById('result-box').classList.add('visible');
+  } else {
+    document.getElementById('not-found').classList.add('visible');
+  }
+}
+
+function buildGenreTags() {
+  const container = document.getElementById('genre-tags');
+  Object.keys(MUSIC).forEach(genre => {
+    const tag = document.createElement('span');
+    tag.className = 'genre-tag';
+    tag.textContent = genre;
+    tag.onclick = () => {
+      document.getElementById('genre-input').value = genre;
+      search();
+    };
+    container.appendChild(tag);
+  });
+}
+
+function buildTable() {
+  const tbody = document.getElementById('full-table');
+  tbody.innerHTML = Object.entries(MUSIC).map(([genre, data]) => `
+    <tr>
+      <td>${genre}</td>
+      <td>${data.artist}</td>
+      <td>${data.song}</td>
+    </tr>
+  `).join('');
+}
+
+// Enter key support
+document.getElementById('genre-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') search();
+});
+
+buildGenreTags();
+buildTable();
+</script>
+</body>
+</html>
