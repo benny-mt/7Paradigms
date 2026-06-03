@@ -7,18 +7,16 @@ It includes 7 programs that vary in the programming languages they were created 
 
 
 
-__Imperative:__ Prime finder written in Python (Pyscript) 
+__Imperative:__ Prime finder written in Python (Pyscript). It's a program that can show you every prime number leading up to the number that you entered.
 
-__Functional:__ Calculator written in Elm 
+__Functional:__ Calculator written in Elm. This is a simple calculator program that was written in Elm.
 
-__Logical:__ Family reasoner written in Prolog 
+__Logical:__ Family reasoner written in Prolog. This is the family reasoner program that was discussed in the powerpoints. 
 
-__OOP:__ blackjack written in C++ 
+__OOP:__ blackjack written in C++. This is a simple Blackjack game that can be played. 
 
-__Extra:__ Music hub written in JavaScript 
+__Extra:__ Music hub written in JavaScript. This is a personal Music Hub that shows different songs, their artist and their genre. You can also 
 
-__Extra 2:__ Game review program written in JavaScript 
+__Extra 2:__ Game review program written in JavaScript. This is a personal Game Library type program that displays my favorite games and my score for them.
 
-__CV:__ written with JavaScript 
-
-
+__CV:__ written with JavaScript. This the required CV program. I didn't put an insane amount of my information on the program, so it kind of seems like a resume, however it still works as it was requested. 
