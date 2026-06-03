@@ -7,7 +7,7 @@
   <style>
     body {
       background-color: #000000;
-      color: #00ff00;
+      color: #b4ccec;
       font-family: "Courier New", Courier, monospace;
       margin: 0;
       padding: 10px;
@@ -37,7 +37,7 @@
 
     .site-header {
       text-align: center;
-      border: 3px double #ff00ff;
+      border: 3px double #568dd5;
       background: #000033;
       padding: 16px;
       margin-bottom: 14px;
@@ -48,11 +48,7 @@
       margin-bottom: 6px;
       animation: colorshift 4s infinite alternate;
     }
-    @keyframes colorshift {
-      0%   { color: #ff00ff; }
-      50%  { color: #00ffff; }
-      100% { color: #ffff00; }
-    }
+ 
     .site-subtitle { font-size: 0.78rem; color: #aaaaaa; letter-spacing: 0.14em; }
     .blinking { animation: blink 1s step-end infinite; }
     @keyframes blink { 50% { opacity: 0; } }
@@ -61,12 +57,12 @@
 
     /* Genre tags */
     .genres-box {
-      border: 2px solid #00ff00;
+      border: 2px solid #568dd5;
       background: #000011;
       padding: 12px 16px;
       margin-bottom: 14px;
     }
-    .genres-box p { font-size: 0.75rem; color: #ffff00; letter-spacing: 0.1em; margin-bottom: 8px; }
+    .genres-box p { font-size: 0.75rem; color: #568dd5; letter-spacing: 0.1em; margin-bottom: 8px; }
     .genre-tags { display: flex; flex-wrap: wrap; gap: 6px; }
     .genre-tag {
       font-size: 0.72rem;
@@ -81,12 +77,12 @@
 
     /* Search */
     .search-box {
-      border: 2px solid #ffff00;
+      border: 2px solid #568dd5;
       background: #000011;
       padding: 14px 16px;
       margin-bottom: 14px;
     }
-    .search-box label { display: block; font-size: 0.78rem; color: #ffff00; letter-spacing: 0.12em; margin-bottom: 8px; }
+    .search-box label { display: block; font-size: 0.78rem; color: #568dd5; letter-spacing: 0.12em; margin-bottom: 8px; }
     .input-row { display: flex; gap: 8px; }
     .search-box input {
       flex: 1;
@@ -95,11 +91,11 @@
       padding: 6px 10px;
       background: #000;
       border: 2px inset #555;
-      color: #00ff00;
+      color: #b4ccec;
       outline: none;
       letter-spacing: 0.08em;
     }
-    .search-box input:focus { border-color: #00ff00; }
+    .search-box input:focus { border-color: #b4ccec; }
     .search-box button {
       font-family: "Courier New", monospace;
       font-size: 0.82rem;
@@ -114,7 +110,7 @@
 
     /* Result */
     .result-box {
-      border: 2px solid #00ffff;
+      border: 2px solid #568dd5;
       background: #000022;
       padding: 14px 16px;
       margin-bottom: 14px;
@@ -128,7 +124,7 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
       margin-bottom: 12px;
-      border-bottom: 1px solid #222;
+      border-bottom: 1px solid #568dd5;
       padding-bottom: 6px;
     }
 
@@ -170,7 +166,7 @@
     }
     .result-artist {
       font-size: 1.2rem;
-      color: #ffff00;
+      color: #b4ccec;
       letter-spacing: 0.03em;
     }
     .result-song {
@@ -204,7 +200,7 @@
 
     /* Full table */
     .all-box {
-      border: 2px solid #333;
+      border: 2px solid #568dd5;
       background: #000011;
       padding: 12px 16px;
       margin-bottom: 14px;
@@ -214,8 +210,8 @@
     th { text-align: left; color: #555; letter-spacing: 0.12em; text-transform: uppercase; border-bottom: 1px solid #222; padding: 4px 8px; font-weight: normal; }
     td { padding: 5px 8px; border-bottom: 1px solid #111; color: #999; vertical-align: middle; }
     td:first-child { color: #ff00ff; }
-    td:nth-child(2) { color: #ffff00; }
-    td:nth-child(3) { color: #00ffff; }
+    td:nth-child(2) { color: #b4ccec; }
+    td:nth-child(3) { color: #204a80; }
     td.cover-cell { width: 36px; padding: 3px 8px; }
     .thumb {
       width: 30px;
@@ -243,8 +239,7 @@
 <div class="container">
 
   <div class="site-header">
-    <div class="site-title">~*~ MY MUSIC HUB ~*~</div>
-    <div class="site-subtitle">:: FAVORITE ARTISTS &amp; SONGS BY GENRE :: <span class="blinking">♪</span></div>
+    <div class="site-title">Benny's Music Hub </div>
   </div>
 
 
@@ -297,8 +292,6 @@
     </table>
   </div>
 
-  <div class="site-footer">
-    <p>~~ these are MY opinions, not yours ~~ ♪</p>
   </div>
 
 </div>
