@@ -1,0 +1,128 @@
+{
+  "header": {
+    "enabled": true,
+    "name": "Name",
+    "title": "Senior College Student",
+    "email": "email@gmail.com",
+    "phone": "Phone Number",
+    "linkedin": "linkedin.com/in/"
+  },
+  "education": {
+    "enabled": true,
+    "entries": [
+      {
+        "enabled": true,
+        "degree": "Bachelor's Degree in Computer Science",
+        "institution": "University of Puerto Rico, Mayaguez",
+        "graduation": "Expected 2026",
+        "gpa": "3.1"
+      }
+    ]
+  },
+  "skills": {
+    "enabled": true,
+    "entries": [
+      { "enabled": true, "category": "Programming", "items": "Python, C++, SQL (mySQL), PHP, LaTeX, Flex, Scheme" },
+      { "enabled": true, "category": "Software",    "items": "Splunk, Wireshark, Nmap, MSFVenom, John The Ripper, CyberChef, ROS" }
+    ]
+  },
+  "experience": {
+    "enabled": true,
+    "entries": [
+      {
+        "enabled": true,
+        "title": "IT Assistant",
+        "organization": "UPR, Mayaguez",
+        "dates": "09/2025 – Present",
+        "bullets": [
+          "Assisting in day to day IT tasks around the UPRM physics building.",
+          "Solving staff technical problems while maintaining and improving the building's LAN and hardware."
+        ]
+      },
+      {
+        "enabled": true,
+        "title": "Tech Fellow (TA)",
+        "organization": "Codepath",
+        "dates": "07/2024 – 11/2024",
+        "bullets": [
+          "Gained experience with multiple SIEM tools used in real world applications.",
+          "Assisted students in their projects and answered questions regarding cybersecurity subjects."
+        ]
+      },
+      {
+        "enabled": true,
+        "title": "CS Database Course Manager",
+        "organization": "UPR, Mayaguez",
+        "dates": "01/2024 – 05/2024",
+        "bullets": [
+          "Managing and creating users and resources on a UPRM hosted virtual Linux server.",
+          "Allowing students to create and develop class projects."
+        ]
+      }
+    ]
+  },
+  "certificates": {
+    "enabled": true,
+    "entries": [
+      { "enabled": true, "name": "CC - ISC2 Certified in Cybersecurity", "date": "02/02/2026", "status": "Acquired" },
+      { "enabled": true, "name": "Cisco Networking Basics",               "date": "",           "status": "Currently Pursuing" },
+      { "enabled": true, "name": "Cisco Intro. to Cybersecurity",         "date": "",           "status": "Currently Pursuing" }
+    ]
+  },
+  "professional_development": {
+    "enabled": true,
+    "entries": [
+      {
+        "enabled": true,
+        "type": "Research",
+        "title": "UPRM x Lockheed Martin LiDron Autonomous Landing System for UAVs",
+        "bullets": [
+          "Creating an autonomous drone that detects surroundings via LiDAR sensors to maneuver through obstacles and find a landing spot.",
+          "Implemented a C++ object detection script using the Intel RealSense viewer camera for the object avoidance algorithm."
+        ]
+      },
+      {
+        "enabled": true,
+        "type": "Project",
+        "title": "Collaborative Videogame Database in mySQL Server",
+        "bullets": [
+          "Hosted on a UPRM mySQL MariaDB forked phpmyadmin server.",
+          "Contains user creation, game search, and user-written reviews."
+        ]
+      },
+      {
+        "enabled": true,
+        "type": "Research",
+        "title": "AI Tourism Chatbot centered around the West of Puerto Rico",
+        "bullets": [
+          "Ongoing research proposal for a smart tourism chatbot to promote economic growth of Puerto Rico's westside businesses.",
+          "Provides travel advice, route planning, and business information."
+        ]
+      },
+      {
+        "enabled": true,
+        "type": "Research",
+        "title": "CAHSI Cybersecurity Research",
+        "bullets": [
+          "Developed a basic file corruption prevention system using file management techniques to ensure data integrity.",
+          "Designed mechanisms to detect and mitigate potential corruption during encryption and decryption."
+        ]
+      }
+    ]
+  },
+  "courses": {
+    "enabled": true,
+    "entries": [
+      {
+        "enabled": true,
+        "name": "Intro. to Cybersecurity",
+        "topics": "Linux, File Access Control, Networking (IP and DNS exploits), Keys, Malware, Data, Password Cracking, Honey Pots, Penetration Testing"
+      },
+      {
+        "enabled": true,
+        "name": "Intro. to Database Systems",
+        "topics": "Database architecture and Design, Entity-relational model, Queries, SQL, Functional Dependencies and Normalization"
+      }
+    ]
+  }
+}

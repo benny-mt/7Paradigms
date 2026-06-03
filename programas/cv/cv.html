@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CV Builder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <!-- jsPDF for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg:        #f4f1eb;
+      --panel:     #ffffff;
+      --border:    #d8d0c0;
+      --ink:       #1c1a17;
+      --ink-mid:   #5a5242;
+      --ink-dim:   #9a8f7e;
+      --accent:    #2a5c8a;
+      --accent-lt: #e8f0f8;
+      --toggle-on: #2a5c8a;
+      --toggle-off:#c8c0b0;
+      --danger:    #c0392b;
+      --shadow:    0 2px 12px rgba(28,26,23,0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Instrument Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ---- Top Bar ---- */
+    .topbar {
+      background: var(--ink);
+      color: #f4f1eb;
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .topbar-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.25rem;
+      letter-spacing: 0.02em;
+    }
+    .topbar-sub {
+      font-size: 0.72rem;
+      color: #9a8f7e;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .topbar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .btn {
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 8px 18px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #1e4a72; }
+    .btn-outline { background: transparent; color: #f4f1eb; border: 1px solid #5a5242; }
+    .btn-outline:hover { border-color: #f4f1eb; }
+    .btn-danger  { background: var(--danger); color: #fff; }
+    .btn-danger:hover { background: #a93226; }
+
+    /* ---- Layout ---- */
+    .layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 0;
+      min-height: calc(100vh - 56px);
+    }
+
+    /* ---- Sidebar ---- */
+    .sidebar {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .sidebar-section {
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+    }
+
+    /* Toggle switch */
+    .toggle {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--toggle-off);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      left: 3px; top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle input:checked + .toggle-slider { background: var(--toggle-on); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(16px); }
+
+    .entry-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.82rem;
+    }
+    .entry-item:last-child { border-bottom: none; }
+    .entry-item.disabled { opacity: 0.45; }
+    .entry-label { flex: 1; line-height: 1.4; }
+    .entry-label strong { display: block; color: var(--ink); }
+    .entry-label span   { color: var(--ink-dim); font-size: 0.75rem; }
+
+    /* ---- Preview Pane ---- */
+    .preview-pane {
+      padding: 32px;
+      overflow-y: auto;
+      background: var(--bg);
+    }
+
+    .preview-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink-dim);
+      margin-bottom: 16px;
+    }
+
+    /* ---- Resume Output ---- */
+    #resume-output {
+      background: #fff;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 48px 52px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: 13px;
+      line-height: 1.55;
+      color: #1c1a17;
+    }
+
+    /* Resume internals */
+    .cv-name {
+      font-family: 'Instrument Serif', serif;
+      font-size: 2rem;
+      letter-spacing: 0.01em;
+      color: #1c1a17;
+      line-height: 1;
+    }
+    .cv-title { font-size: 0.9rem; color: #5a5242; margin: 4px 0 8px; }
+    .cv-contact { font-size: 0.78rem; color: #5a5242; display: flex; gap: 16px; flex-wrap: wrap; }
+    .cv-divider { border: none; border-top: 2px solid #1c1a17; margin: 14px 0 12px; }
+    .cv-section-title {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border-bottom: 1px solid #d8d0c0;
+      padding-bottom: 4px;
+      margin: 18px 0 10px;
+    }
+    .cv-entry { margin-bottom: 10px; }
+    .cv-entry-header { display: flex; justify-content: space-between; align-items: baseline; }
+    .cv-entry-title  { font-weight: 600; font-size: 0.88rem; }
+    .cv-entry-date   { font-size: 0.75rem; color: #9a8f7e; white-space: nowrap; }
+    .cv-entry-sub    { font-size: 0.8rem; color: #5a5242; margin: 1px 0 4px; }
+    .cv-bullets      { padding-left: 16px; }
+    .cv-bullets li   { font-size: 0.8rem; color: #3a3530; margin-bottom: 2px; }
+    .cv-skill-row    { display: flex; gap: 8px; margin-bottom: 4px; font-size: 0.8rem; }
+    .cv-skill-cat    { font-weight: 600; min-width: 100px; color: #1c1a17; }
+    .cv-skill-items  { color: #3a3530; }
+    .cv-cert-row     { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px; }
+    .cv-cert-status  { color: #5a5242; font-style: italic; }
+    .cv-course-name  { font-weight: 600; font-size: 0.82rem; }
+    .cv-course-topics { font-size: 0.78rem; color: #5a5242; margin-bottom: 6px; }
+    .cv-dev-type     { display: inline-block; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; background: var(--accent-lt); color: var(--accent); padding: 1px 7px; border-radius: 3px; margin-bottom: 3px; }
+
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+      #resume-output { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="topbar">
+  <div>
+    <div class="topbar-title">CV Builder</div>
+    <div class="topbar-sub">Toggle sections · Preview · Export</div>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn btn-outline" onclick="saveJSON()">💾 Save JSON</button>
+    <button class="btn btn-primary" onclick="downloadPDF()">⬇ Download PDF</button>
+  </div>
+</div>
+
+<!-- Main Layout -->
+<div class="layout">
+
+  <!-- Sidebar: toggles -->
+  <div class="sidebar" id="sidebar"></div>
+
+  <!-- Preview -->
+  <div class="preview-pane">
+    <div class="preview-label">Live Preview</div>
+    <div id="resume-output"></div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// CV Builder — JavaScript
+// Data lives in cv (JSON object), mirroring cv.json file.
+// Sections and entries can be toggled on/off.
+// Renders HTML resume and generates PDF via jsPDF.
+// ============================================================
+
+// ---- Load CV data (mirrors cv.json) ----
+let cv = {
+  header: {
+    enabled: true,
+    name: "Benny Marcano Tirado",
+    title: "Computer Science (Senior)",
+    email: "bmarcano123@gmail.com",
+    phone: "Numero de Telefono",
+    linkedin: "linkedin.com/in/benny-m3/"
+  },
+  education: {
+    enabled: true,
+    entries: [
+      { enabled: true, degree: "Bachelor's Degree in Computer Science", institution: "University of Puerto Rico, Mayaguez", graduation: "Expected May 2026", gpa: "3.1" }
+    ]
+  },
+  skills: {
+    enabled: true,
+    entries: [
+      { enabled: true, category: "Programming", items: "Python, C++, SQL (mySQL), PHP, LaTeX, Flex, Scheme" },
+      { enabled: true, category: "Software",    items: "Splunk, Wireshark, Nmap, MSFVenom, John The Ripper, CyberChef, ROS" }
+    ]
+  },
+  experience: {
+    enabled: true,
+    entries: [
+      {
+        enabled: true, title: "IT Assistant", organization: "UPR, Mayaguez", dates: "09/2025 – Present",
+        bullets: ["Assisting in day to day IT tasks around the UPRM physics building.", "Solving staff technical problems while maintaining and improving the building's LAN and hardware."]
+      },
+      {
+        enabled: true, title: "Tech Fellow (TA)", organization: "Codepath", dates: "07/2024 – 11/2024",
+        bullets: ["Gained experience with multiple SIEM tools used in real world applications.", "Assisted students in their projects and answered questions regarding cybersecurity subjects."]
+      },
+      {
+        enabled: true, title: "CS Database Course Manager", organization: "UPR, Mayaguez", dates: "01/2024 – 05/2024",
+        bullets: ["Managing and creating users and resources on a UPRM hosted virtual Linux server.", "Allowing students to create and develop class projects."]
+      }
+    ]
+  },
+  certificates: {
+    enabled: true,
+    entries: [
+      { enabled: true, name: "CC - ISC2 Certified in Cybersecurity", date: "02/02/2026", status: "Acquired" },
+      { enabled: true, name: "Cisco Networking Basics",               date: "",           status: "Currently Pursuing" },
+      { enabled: true, name: "Cisco Intro. to Cybersecurity",         date: "",           status: "Currently Pursuing" }
+    ]
+  },
+  professional_development: {
+    enabled: true,
+    entries: [
+      {
+        enabled: true, type: "Research", title: "UPRM x Lockheed Martin LiDron Autonomous Landing System for UAVs",
+        bullets: ["Creating an autonomous drone that detects surroundings via LiDAR sensors to maneuver through obstacles and find a landing spot.", "Implemented a C++ object detection script using the Intel RealSense viewer camera for the object avoidance algorithm."]
+      },
+      {
+        enabled: true, type: "Project", title: "Collaborative Videogame Database in mySQL Server",
+        bullets: ["Hosted on a UPRM mySQL MariaDB forked phpmyadmin server.", "Contains user creation, game search, and user-written reviews."]
+      },
+      {
+        enabled: true, type: "Research", title: "AI Tourism Chatbot centered around the West of Puerto Rico",
+        bullets: ["Ongoing research for a smart tourism chatbot to promote economic growth of Puerto Rico's westside businesses.", "Provides travel advice, route planning, and business information."]
+      },
+      {
+        enabled: true, type: "Research", title: "CAHSI Cybersecurity Research",
+        bullets: ["Developed a file corruption prevention system using file management techniques to ensure data integrity.", "Designed mechanisms to detect and mitigate corruption during encryption and decryption."]
+      }
+    ]
+  },
+  courses: {
+    enabled: true,
+    entries: [
+      { enabled: true, name: "Intro. to Cybersecurity",    topics: "Linux, File Access Control, Networking (IP and DNS exploits), Keys, Malware, Data, Password Cracking, Honey Pots, Penetration Testing" },
+      { enabled: true, name: "Intro. to Database Systems", topics: "Database architecture and Design, Entity-relational model, Queries, SQL, Functional Dependencies and Normalization" }
+    ]
+  }
+};
+
+const SECTION_LABELS = {
+  header: "Header",
+  education: "Education",
+  skills: "Skills",
+  experience: "Experience",
+  certificates: "Certificates",
+  professional_development: "Professional Development",
+  courses: "Courses"
+};
+
+// ---- Render Sidebar ----
+function renderSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.innerHTML = '';
+
+  for (const [key, section] of Object.entries(cv)) {
+    const wrap = document.createElement('div');
+    wrap.className = 'sidebar-section';
+
+    // Section header with toggle
+    const header = document.createElement('div');
+    header.className = 'section-header';
+    header.innerHTML = `
+      <span>${SECTION_LABELS[key]}</span>
+      <label class="toggle">
+        <input type="checkbox" ${section.enabled ? 'checked' : ''} onchange="toggleSection('${key}', this.checked)"/>
+        <span class="toggle-slider"></span>
+      </label>`;
+    wrap.appendChild(header);
+
+    // Entry toggles (skip header which has no entries array)
+    if (section.entries) {
+      section.entries.forEach((entry, i) => {
+        const item = document.createElement('div');
+        item.className = 'entry-item' + (entry.enabled ? '' : ' disabled');
+
+        const label = entry.title || entry.degree || entry.name || entry.category || `Entry ${i+1}`;
+        const sub   = entry.organization || entry.date || entry.status || entry.topics || '';
+
+        item.innerHTML = `
+          <label class="toggle" style="margin-top:2px">
+            <input type="checkbox" ${entry.enabled ? 'checked' : ''} onchange="toggleEntry('${key}', ${i}, this.checked)"/>
+            <span class="toggle-slider"></span>
+          </label>
+          <div class="entry-label">
+            <strong>${label}</strong>
+            ${sub ? `<span>${sub}</span>` : ''}
+          </div>`;
+        wrap.appendChild(item);
+      });
+    }
+
+    sidebar.appendChild(wrap);
+  }
+}
+
+// ---- Toggle Handlers ----
+function toggleSection(key, val) {
+  cv[key].enabled = val;
+  renderResume();
+}
+
+function toggleEntry(key, idx, val) {
+  cv[key].entries[idx].enabled = val;
+  renderSidebar();
+  renderResume();
+}
+
+// ---- Render Resume HTML ----
+function renderResume() {
+  const out = document.getElementById('resume-output');
+  out.innerHTML = buildResumeHTML();
+}
+
+function buildResumeHTML() {
+  let html = '';
+
+  // Header
+  if (cv.header.enabled) {
+    const h = cv.header;
+    html += `
+      <div class="cv-name">${h.name}</div>
+      <div class="cv-title">${h.title}</div>
+      <div class="cv-contact">
+        <span>${h.email}</span>
+        <span>${h.phone}</span>
+        <span>${h.linkedin}</span>
+      </div>
+      <hr class="cv-divider"/>`;
+  }
+
+  // Education
+  if (cv.education.enabled) {
+    const active = cv.education.entries.filter(e => e.enabled);
+    if (active.length) {
+      html += `<div class="cv-section-title">Education</div>`;
+      active.forEach(e => {
+        html += `
+          <div class="cv-entry">
+            <div class="cv-entry-header">
+              <span class="cv-entry-title">${e.degree}</span>
+              <span class="cv-entry-date">${e.graduation}</span>
+            </div>
+            <div class="cv-entry-sub">${e.institution} &nbsp;·&nbsp; GPA: ${e.gpa}</div>
+          </div>`;
+      });
+    }
+  }
+
+  // Skills
+  if (cv.skills.enabled) {
+    const active = cv.skills.entries.filter(e => e.enabled);
+    if (active.length) {
+      html += `<div class="cv-section-title">Skills</div>`;
+      active.forEach(e => {
+        html += `<div class="cv-skill-row"><span class="cv-skill-cat">${e.category}:</span><span class="cv-skill-items">${e.items}</span></div>`;
+      });
+    }
+  }
+
+  // Experience
+  if (cv.experience.enabled) {
+    const active = cv.experience.entries.filter(e => e.enabled);
+    if (active.length) {
+      html += `<div class="cv-section-title">Experience</div>`;
+      active.forEach(e => {
+        html += `
+          <div class="cv-entry">
+            <div class="cv-entry-header">
+              <span class="cv-entry-title">${e.title}, ${e.organization}</span>
+              <span class="cv-entry-date">${e.dates}</span>
+            </div>
+            <ul class="cv-bullets">${e.bullets.map(b => `<li>${b}</li>`).join('')}</ul>
+          </div>`;
+      });
+    }
+  }
+
+  // Certificates
+  if (cv.certificates.enabled) {
+    const active = cv.certificates.entries.filter(e => e.enabled);
+    if (active.length) {
+      html += `<div class="cv-section-title">Certificates</div>`;
+      active.forEach(e => {
+        html += `
+          <div class="cv-cert-row">
+            <span>${e.name}</span>
+            <span class="cv-cert-status">${e.status}${e.date ? ' · ' + e.date : ''}</span>
+          </div>`;
+      });
+    }
+  }
+
+  // Professional Development
+  if (cv.professional_development.enabled) {
+    const active = cv.professional_development.entries.filter(e => e.enabled);
+    if (active.length) {
+      html += `<div class="cv-section-title">Professional Development</div>`;
+      active.forEach(e => {
+        html += `
+          <div class="cv-entry">
+            <div><span class="cv-dev-type">${e.type}</span></div>
+            <div class="cv-entry-title" style="font-size:0.85rem">${e.title}</div>
+            <ul class="cv-bullets">${e.bullets.map(b => `<li>${b}</li>`).join('')}</ul>
+          </div>`;
+      });
+    }
+  }
+
+  // Courses
+  if (cv.courses.enabled) {
+    const active = cv.courses.entries.filter(e => e.enabled);
+    if (active.length) {
+      html += `<div class="cv-section-title">Courses</div>`;
+      active.forEach(e => {
+        html += `
+          <div class="cv-course-name">${e.name}</div>
+          <div class="cv-course-topics">${e.topics}</div>`;
+      });
+    }
+  }
+
+  return html;
+}
+
+// ---- Save JSON ----
+function saveJSON() {
+  const blob = new Blob([JSON.stringify(cv, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'cv.json';
+  a.click();
+}
+
+// ---- PDF Generation via jsPDF ----
+function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+
+  const margin = 50;
+  const pageW  = doc.internal.pageSize.getWidth();
+  const maxW   = pageW - margin * 2;
+  let y = margin;
+
+  function checkPage(needed = 20) {
+    if (y + needed > doc.internal.pageSize.getHeight() - margin) {
+      doc.addPage();
+      y = margin;
+    }
+  }
+
+  function sectionTitle(text) {
+    checkPage(30);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(42, 92, 138);
+    doc.text(text.toUpperCase(), margin, y);
+    doc.setDrawColor(200, 190, 175);
+    doc.setLineWidth(0.5);
+    doc.line(margin, y + 3, margin + maxW, y + 3);
+    y += 14;
+    doc.setTextColor(28, 26, 23);
+  }
+
+  function wrappedText(text, x, startY, fontSize, style, color, lineW) {
+    doc.setFont('helvetica', style || 'normal');
+    doc.setFontSize(fontSize || 10);
+    if (color) doc.setTextColor(...color);
+    const lines = doc.splitTextToSize(text, lineW || maxW);
+    checkPage(lines.length * (fontSize || 10) * 1.4);
+    doc.text(lines, x, startY !== undefined ? startY : y);
+    return lines.length * (fontSize || 10) * 1.4;
+  }
+
+  // Header
+  if (cv.header.enabled) {
+    const h = cv.header;
+    doc.setFont('times', 'bold');
+    doc.setFontSize(24);
+    doc.setTextColor(28, 26, 23);
+    doc.text(h.name, margin, y); y += 22;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(90, 82, 66);
+    doc.text(h.title, margin, y); y += 14;
+
+    doc.setFontSize(9);
+    doc.text(`${h.email}   ${h.phone}   ${h.linkedin}`, margin, y); y += 10;
+
+    doc.setDrawColor(28, 26, 23);
+    doc.setLineWidth(1.5);
+    doc.line(margin, y, margin + maxW, y); y += 14;
+    doc.setTextColor(28, 26, 23);
+  }
+
+  // Education
+  if (cv.education.enabled) {
+    const active = cv.education.entries.filter(e => e.enabled);
+    if (active.length) {
+      sectionTitle('Education');
+      active.forEach(e => {
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+        doc.text(e.degree, margin, y);
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+        doc.setTextColor(154, 143, 126);
+        doc.text(e.graduation, margin + maxW, y, { align: 'right' });
+        doc.setTextColor(28, 26, 23); y += 13;
+        doc.setFontSize(9); doc.setTextColor(90, 82, 66);
+        doc.text(`${e.institution}  ·  GPA: ${e.gpa}`, margin, y);
+        doc.setTextColor(28, 26, 23); y += 14;
+      });
+    }
+  }
+
+  // Skills
+  if (cv.skills.enabled) {
+    const active = cv.skills.entries.filter(e => e.enabled);
+    if (active.length) {
+      sectionTitle('Skills');
+      active.forEach(e => {
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
+        doc.text(e.category + ':', margin, y);
+        doc.setFont('helvetica', 'normal');
+        const lines = doc.splitTextToSize(e.items, maxW - 80);
+        doc.text(lines, margin + 80, y);
+        y += lines.length * 12 + 4;
+      });
+    }
+  }
+
+  // Experience
+  if (cv.experience.enabled) {
+    const active = cv.experience.entries.filter(e => e.enabled);
+    if (active.length) {
+      sectionTitle('Experience');
+      active.forEach(e => {
+        checkPage(40);
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+        doc.setTextColor(28, 26, 23);
+        doc.text(`${e.title}, ${e.organization}`, margin, y);
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+        doc.setTextColor(154, 143, 126);
+        doc.text(e.dates, margin + maxW, y, { align: 'right' });
+        doc.setTextColor(28, 26, 23); y += 13;
+        e.bullets.forEach(b => {
+          doc.setFontSize(9);
+          const lines = doc.splitTextToSize('• ' + b, maxW - 10);
+          checkPage(lines.length * 12);
+          doc.text(lines, margin + 6, y);
+          y += lines.length * 12;
+        });
+        y += 4;
+      });
+    }
+  }
+
+  // Certificates
+  if (cv.certificates.enabled) {
+    const active = cv.certificates.entries.filter(e => e.enabled);
+    if (active.length) {
+      sectionTitle('Certificates');
+      active.forEach(e => {
+        checkPage(14);
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+        doc.setTextColor(28, 26, 23);
+        doc.text(e.name, margin, y);
+        doc.setTextColor(90, 82, 66);
+        doc.text(e.status + (e.date ? ' · ' + e.date : ''), margin + maxW, y, { align: 'right' });
+        doc.setTextColor(28, 26, 23); y += 13;
+      });
+    }
+  }
+
+  // Professional Development
+  if (cv.professional_development.enabled) {
+    const active = cv.professional_development.entries.filter(e => e.enabled);
+    if (active.length) {
+      sectionTitle('Professional Development');
+      active.forEach(e => {
+        checkPage(40);
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
+        doc.setTextColor(42, 92, 138);
+        doc.text('[' + e.type.toUpperCase() + ']', margin, y);
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+        doc.setTextColor(28, 26, 23);
+        const titleLines = doc.splitTextToSize(e.title, maxW - 60);
+        doc.text(titleLines, margin + 54, y);
+        y += titleLines.length * 13;
+        e.bullets.forEach(b => {
+          doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+          const lines = doc.splitTextToSize('• ' + b, maxW - 10);
+          checkPage(lines.length * 12);
+          doc.text(lines, margin + 6, y);
+          y += lines.length * 12;
+        });
+        y += 4;
+      });
+    }
+  }
+
+  // Courses
+  if (cv.courses.enabled) {
+    const active = cv.courses.entries.filter(e => e.enabled);
+    if (active.length) {
+      sectionTitle('Courses');
+      active.forEach(e => {
+        checkPage(28);
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+        doc.setTextColor(28, 26, 23);
+        doc.text(e.name, margin, y); y += 12;
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+        doc.setTextColor(90, 82, 66);
+        const lines = doc.splitTextToSize(e.topics, maxW);
+        doc.text(lines, margin, y);
+        doc.setTextColor(28, 26, 23);
+        y += lines.length * 12 + 6;
+      });
+    }
+  }
+
+  doc.save('resume.pdf');
+}
+
+// ---- Init ----
+renderSidebar();
+renderResume();
+</script>
+</body>
+</html>
