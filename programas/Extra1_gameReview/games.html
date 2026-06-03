@@ -1,12 +1,16 @@
+<!-- light blue #568dd5 -->
+<!-- super light blue #00ffff-->
+<!-- darker blue #204a80 -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>~*~ My Fav Games ~*~</title>
+  <title>My Favorite Games</title>
   <style>
     body {
-      background-color: #000080;
+      background-color: #000033;
       background-image:
         repeating-linear-gradient(
           0deg,
@@ -15,7 +19,7 @@
           rgba(0,0,255,0.08) 2px,
           rgba(0,0,255,0.08) 4px
         );
-      color: #00ff00;
+      color: #568dd5 ;
       font-family: "Courier New", Courier, monospace;
       margin: 0;
       padding: 10px;
@@ -23,7 +27,7 @@
 
     .marquee-bar {
       background: #000;
-      border: 2px solid #ffff00;
+      border: 2px solid #568dd5 ;
       padding: 4px 0;
       margin-bottom: 10px;
       overflow: hidden;
@@ -32,7 +36,7 @@
     .marquee-inner {
       display: inline-block;
       animation: marquee 18s linear infinite;
-      color: #ffff00;
+      color: #568dd5 ;
       font-size: 0.85rem;
       letter-spacing: 0.1em;
     }
@@ -45,38 +49,29 @@
 
     .site-header {
       text-align: center;
-      border: 3px double #ffff00;
+      border: 3px double #aaaaaa ;
       background: #000;
       padding: 16px;
       margin-bottom: 12px;
     }
     .site-title {
       font-size: 2rem;
-      text-shadow: 2px 2px #ff0000, -1px -1px #0000ff;
+      text-shadow: 2px 2px -1px -1px #0000ff;
       letter-spacing: 0.05em;
       margin-bottom: 6px;
       animation: colorshift 3s infinite alternate;
+    
     }
-    @keyframes colorshift {
-      0%   { color: #ff00ff; }
-      33%  { color: #00ffff; }
-      66%  { color: #ffff00; }
-      100% { color: #ff00ff; }
-    }
-    .site-subtitle { color: #00ff00; font-size: 0.8rem; letter-spacing: 0.15em; }
-    .blinking { animation: blink 1s step-end infinite; }
-    @keyframes blink { 50% { opacity: 0; } }
-
-    .divider { text-align: center; color: #ffff00; font-size: 0.85rem; letter-spacing: 0.2em; margin: 10px 0; }
+    .divider { text-align: center; color: #bbbbbb; font-size: 0.85rem; letter-spacing: 0.2em; margin: 10px 0; }
 
     .filter-section {
       background: #000;
-      border: 2px solid #00ff00;
+      border: 2px solid #aaaaaa;
       padding: 8px 12px;
       margin-bottom: 12px;
       text-align: center;
     }
-    .filter-section p { font-size: 0.75rem; color: #ffff00; margin-bottom: 6px; letter-spacing: 0.1em; }
+    .filter-section p { font-size: 0.75rem; color: #bbbbbb; margin-bottom: 6px; letter-spacing: 0.1em; }
     .filter-btn {
       font-family: "Courier New", monospace;
       font-size: 0.78rem;
@@ -89,7 +84,7 @@
       letter-spacing: 0.05em;
     }
     .filter-btn:active { border-style: inset; }
-    .filter-btn.active { background: #000000; color: #ffff00; border: 2px inset #aaaaaa; }
+    .filter-btn.active { background: #000000; color: #bbbbbb; border: 2px inset #aaaaaa; }
 
     .game-count { font-size: 0.72rem; color: #aaaaaa; text-align: center; margin-bottom: 8px; }
 
@@ -97,12 +92,12 @@
 
     .game-card {
       background: #000;
-      border: 2px solid #00ff00;
+      border: 2px solid #568dd5 ;
       display: flex;
       overflow: hidden;
     }
-    .game-card:nth-child(even) { border-color: #00ffff; }
-    .game-card:nth-child(3n)   { border-color: #ff00ff; }
+    .game-card:nth-child(even) { border-color: #568dd5 ; }
+    .game-card:nth-child(3n)   { border-color: #568dd5  }
 
     .game-img-wrap {
       width: 140px;
@@ -127,10 +122,10 @@
     }
 
     .game-info { padding: 10px 14px; flex: 1; display: flex; flex-direction: column; gap: 5px; }
-    .game-title { font-size: 1rem; color: #ffff00; letter-spacing: 0.05em; text-transform: uppercase; }
+    .game-title { font-size: 1rem; color: #bbbbbb; letter-spacing: 0.05em; text-transform: uppercase; }
     .game-meta  { font-size: 0.72rem; color: #aaaaaa; letter-spacing: 0.08em; }
     .game-meta span { color: #00ffff; }
-    .game-stars { font-size: 0.9rem; letter-spacing: 2px; color: #ffff00; }
+    .game-stars { font-size: 0.9rem; letter-spacing: 2px; color: #bbbbbb; }
     .game-stars .empty-star { color: #333; }
     .game-review { font-size: 0.78rem; color: #cccccc; line-height: 1.6; border-left: 2px solid #444; padding-left: 8px; margin-top: 2px; }
 
@@ -153,61 +148,51 @@
   <div class="game-count" id="game-count"></div>
   <div class="game-list" id="game-list"></div>
 
-  <div class="site-footer">
-    <p style="margin-top:4px">[ <span style="color:#00ff00">best viewed in netscape navigator</span> ]</p>
-  </div>
-
 </div>
 <script>
-// ============================================================
-// To add or edit games, modify the GAMES array below.
-// For images, place the file in an images/ subfolder and set
-// the image field to "images/yourfile.jpg".
-// Leave image as "" to show the default emoji placeholder.
-// Rating is 1 to 5.
-// ============================================================
+
 const GAMES = [
   {
-    title:  "The Witcher 3",
+    title:  "Persona 4 Golden",
     genre:  "RPG",
-    image:  "images/witcher3.jpg",
+    image:  "game_images/persona4.jpg",
     rating: 5,
-    review: "An absolute masterpiece. The world-building, side quests, and characters set a new standard for open-world RPGs. Hundreds of hours and still finding new things."
+    review: "An incredible detective story with compelling characters. While not the most modern gameplay, especially compared to later entries in the series, it stands on it's own as one of the best."
   },
   {
-    title:  "Hollow Knight",
+    title:  "Metroid Dread",
     genre:  "Metroidvania",
-    image:  "images/hollowknight.jpg",
-    rating: 5,
-    review: "Challenging, beautiful, and deeply atmospheric. The lore hidden in every corner makes exploration incredibly rewarding. One of the best indie games ever made."
-  },
-  {
-    title:  "Doom Eternal",
-    genre:  "FPS",
-    image:  "images/doom.jpg",
+    image:  "game_images/metroid_dread.jpg",
     rating: 4,
-    review: "Pure adrenaline from start to finish. The combat loop is genius — aggressive play is survival. Demanding but incredibly satisfying once it clicks."
+    review: "The first Metroid game I beat. It was really fun, and a times even terrifying."
   },
   {
-    title:  "Disco Elysium",
+    title:  "Yakuza 0",
+    genre:  "Beat-Em Up",
+    image:  "game_images/yakuza0.jpg",
+    rating: 5,
+    review: "Pure adrenaline from start to finish. Very emotional as well. This game made me want to improve myself as a person to better help those around me. Masterpiece."
+  },
+  {
+    title:  "Balatro",
+    genre:  "Roguelike",
+    image:  "game_images/balatro.jpg",
+    rating: 4,
+    review: "Unlike anything else. A genuine addiction that takes the form of an innocent card game."
+  },
+  {
+    title:  "The Legend Of Zelda: Majora's Mask 3D",
+    genre:  "Adventure",
+    image:  "game_images/majora.jpg",
+    rating: 4,
+    review: "My favorite Zelda game. I've always loved the fact that you control time in this game, and how everything takes place in the span of 3 days. The moon is terryfing."
+  },
+  {
+    title:  "Clair Obscure: Expedition 33",
     genre:  "RPG",
-    image:  "images/disco.jpg",
+    image:  "game_images/exp33.jpg",
     rating: 5,
-    review: "Unlike anything else. A detective RPG with no combat — just dialogue, skill checks, and one of the most unique protagonists in gaming history."
-  },
-  {
-    title:  "Dark Souls III",
-    genre:  "Action RPG",
-    image:  "images/ds3.jpg",
-    rating: 4,
-    review: "Brutal but fair. Every death teaches you something. The boss fights and interconnected world design are some of the best in the series."
-  },
-  {
-    title:  "Celeste",
-    genre:  "Platformer",
-    image:  "images/celeste.jpg",
-    rating: 5,
-    review: "Pixel-perfect platforming paired with a genuinely touching story about mental health. The assist mode makes it accessible without compromising the core experience."
+    review: "An absolute journey from start to finish. The story was impeccable, the voice acting performances were also exquisite (Ben Starr you were amazing!!). I played the game in it's hardest difficulty and wow, this was a challenge. A good one."
   }
 ];
 
