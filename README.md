@@ -20,3 +20,39 @@ __Extra:__ Music hub written in JavaScript. This is a personal Music Hub that sh
 __Extra 2:__ Game review program written in JavaScript. This is a personal Game Library type program that displays my favorite games and my score for them.
 
 __CV:__ written with JavaScript. This the required CV program. I didn't put an insane amount of my information on the program, so it kind of seems like a resume, however it still works as it was requested. 
+
+
+INSTRUCTIONS:
+
+1. Download the ZIP file.
+2. Unzip the file.
+3. Make sure all of the contents are propely in the extracted folder.
+4. Open the "index.html" with your browser to enter the "main" page.
+5. Select whatever program you want to take a look at and it will take you to that program's page.
+
+
+Program 01: Blackjack
+1. Press DEAL to start
+2. Press HIT if you want another card, STAND if you want to stay with your cards.
+3. Main goal is to have your score reach as close to 21 as possible, while not surpassing it. In addition, you must also beat your opponents score.
+
+Program 02: Calculator
+1. Make any calculations you'd like.
+
+Program 03: Family Reasoner
+1. Enter a query relating to the family that's displayed.
+2. For example, grandparent(tom, X) will return ann, pat and mary because tom is bob's and liz' parent, while ann and pat are bob's children and mary is liz' child. Thus ann, pat and mary are bob's grandchildren.
+
+Program 04: Primer Finder
+1. Enter a number. The program will display every prime number leading up to the number you entered.
+
+Program 05: CV builder
+1. Toggle different sections to remove or add them from the cv file.
+2. Press the "save in JSON" to download file as JSON, or "DOWNLOAD PDF" to download as a PDF file.
+
+Program 06: Game Collection (Benny's Favorite Games)
+1. You can click the filters to display what game in that genre i personally am a fan of.
+
+Program 07: Music Hub
+1. Click the filters to display what songs of each genre I like.
+2. Enter a genre to search the genre and display what songs I like from that genre.
